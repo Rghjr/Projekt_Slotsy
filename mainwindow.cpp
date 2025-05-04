@@ -103,7 +103,7 @@ int MainWindow::PrzypiszOwocek()
 
 void MainWindow::AktualizujSaldo()
 {
-    ui->saldoLabel->setText(QString("%1").arg(saldo));
+    ui->saldoLabel->setText(QString("Aktualne saldo: %1").arg(saldo));
 }
 
 void MainWindow::SprawdzWygrana()
@@ -139,27 +139,27 @@ void MainWindow::SprawdzWygrana()
     // Sprawdzamy wygrane i budujemy wynik wygranej
     if (SumaWystapien[0] >= l_japko) {
         wygrana += w_japko * stawka;
-        wynikWygranej += QString("🍎 %1: %2\n").arg(SumaWystapien[0]).arg(w_japko);
+        wynikWygranej += QString(" 🍎 %1: %2 ").arg(SumaWystapien[0]).arg(w_japko);
     }
     if (SumaWystapien[1] >= l_banan) {
         wygrana += w_banan * stawka;
-        wynikWygranej += QString("🍌 %1: %2\n").arg(SumaWystapien[1]).arg(w_banan);
+        wynikWygranej += QString(" 🍌 %1: %2 ").arg(SumaWystapien[1]).arg(w_banan);
     }
     if (SumaWystapien[2] >= l_winogrono) {
         wygrana += w_winogrono * stawka;
-        wynikWygranej += QString("🍇 %1: %2\n").arg(SumaWystapien[2]).arg(w_winogrono);
+        wynikWygranej += QString(" 🍇 %1: %2 ").arg(SumaWystapien[2]).arg(w_winogrono);
     }
     if (SumaWystapien[3] >= l_wisnia) {
         wygrana += w_wisnia * stawka;
-        wynikWygranej += QString("🍒 %1: %2\n").arg(SumaWystapien[3]).arg(w_wisnia);
+        wynikWygranej += QString(" 🍒 %1: %2 ").arg(SumaWystapien[3]).arg(w_wisnia);
     }
     if (SumaWystapien[4] >= l_ananas) {
         wygrana += w_ananas * stawka;
-        wynikWygranej += QString("🍍 %1: %2\n").arg(SumaWystapien[4]).arg(w_ananas);
+        wynikWygranej += QString(" 🍍 %1: %2 ").arg(SumaWystapien[4]).arg(w_ananas);
     }
     if (SumaWystapien[5] >= l_kiwi) {
         wygrana += w_kiwi * stawka;
-        wynikWygranej += QString("🥝 %1: %2\n").arg(SumaWystapien[5]).arg(w_kiwi);
+        wynikWygranej += QString(" 🥝 %1: %2 ").arg(SumaWystapien[5]).arg(w_kiwi);
     }
 
     // Jeśli jest wygrana, aktualizujemy saldo i wyświetlamy wynik
@@ -168,9 +168,9 @@ void MainWindow::SprawdzWygrana()
         AktualizujSaldo(); // Funkcja do aktualizacji etykiety salda w UI
 
         // Wyświetlamy wynik wygranej w odpowiednim formacie
-        ui->infoLabel->setText(QString("Wygrana: %1\n%2").arg(wygrana).arg(wynikWygranej));
+        ui->infoLabel->setText(QString("Wygrana: %1 \n %2").arg(wygrana).arg(wynikWygranej));
     } else {
-        ui->infoLabel->setText("Brak wygranej.");
+        ui->infoLabel->setText("Brak wygranej");
     }
 }
 
@@ -302,7 +302,7 @@ void MainWindow::ZwiekszStawke()
 {
     if (stawka + 1 <= saldo) {
         stawka++;
-        ui->StawkaLabel->setText(QString("%1").arg(stawka));
+        ui->StawkaLabel->setText(QString("Stawka: %1").arg(stawka));
     }
 }
 
@@ -310,6 +310,7 @@ void MainWindow::ZmniejszStawke()
 {
     if (stawka > 1) {
         stawka--;
-        ui->StawkaLabel->setText(QString("%1").arg(stawka));
+        ui->StawkaLabel->setText(QString("Stawka: %1").arg(stawka));
     }
 }
+
