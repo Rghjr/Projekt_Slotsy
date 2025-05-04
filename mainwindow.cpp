@@ -17,11 +17,34 @@ MainWindow::MainWindow(QWidget *parent)
     ui->KiwiEdit->setText("8");
     ui->BonusEdit->setText("4");
 
+
+
+    ui->liczbaSymboliLineEdit_Japko->setText("8");   // Tu ustawiłeś liczbę symboli dla jabłka
+    ui->liczbaSymboliLineEdit_Banan->setText("8");   // Liczba symboli dla banana
+    ui->liczbaSymboliLineEdit_Winogronko->setText("8");  // Liczba symboli dla winogronka
+    ui->liczbaSymboliLineEdit_Wisnia->setText("8");  // Liczba symboli dla wiśni
+    ui->liczbaSymboliLineEdit_Ananas->setText("8");  // Liczba symboli dla ananasa
+    ui->liczbaSymboliLineEdit_Kiwi->setText("8");    // Liczba symboli dla kiwi
+    ui->liczbaSymboliLineEdit_Bonus->setText("4");   // Liczba symboli dla bonusu
+
+    // Ustawienie początkowych wartości wygranych (jeśli też chcesz je ustawić na etykietach)
+    ui->kwotaWygranejLineEdit_Japko->setText("0.75");  // Kwota wygranej dla jabłka
+    ui->kwotaWygranejLineEdit_Banan->setText("1.25");  // Kwota wygranej dla banana
+    ui->kwotaWygranejLineEdit_Winogronko->setText("2");  // Kwota wygranej dla winogronka
+    ui->kwotaWygranejLineEdit_Wisnia->setText("3");  // Kwota wygranej dla wiśni
+    ui->kwotaWygranejLineEdit_Ananas->setText("5");  // Kwota wygranej dla ananasa
+    ui->kwotaWygranejLineEdit_Kiwi->setText("8");   // Kwota wygranej dla kiwi
+
     // Ładowanie prawdopodobieństw (już z początkowymi wartościami)
     WczytajPrawdopodobienstwa();
 
     // Połączenie przycisku z funkcją
     connect(ui->SPINPRZYCISK, &QPushButton::clicked, this, &MainWindow::LosujOdNowa);
+
+    ui->StawkaLabel->setText("Stawka: 5");
+    connect(ui->plusButton, &QPushButton::clicked, this, &MainWindow::ZwiekszStawke);
+    connect(ui->minusButton, &QPushButton::clicked, this, &MainWindow::ZmniejszStawke);
+
 }
 
 
@@ -76,10 +99,89 @@ int MainWindow::PrzypiszOwocek() {
     if (a < p_japko + p_banan + p_winogrono + p_wisnia + p_ananas + p_kiwi) return 5;  // Kiwi
     return 6;  // Bonus (domyślnie)
 }
+\
+void MainWindow::AktualizujSaldo()
+{
+    ui->saldoLabel->setText(QString("%1").arg(saldo));
+}
+
+void MainWindow::SprawdzWygrana()
+{
+    float wygrana = 0;
+    int rows = gridLabels.size();
+    int cols = rows > 0 ? gridLabels[0].size() : 0;
+
+    int SumaWystapien[7] = {0};
+    QString wynikWygranej;  // String do przechowywania wyników
+
+    // Zliczanie wystąpień symboli
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            QString tekst = gridLabels[i][j]->text();
+            if (tekst == "🍎") SumaWystapien[0]++;
+            if (tekst == "🍌") SumaWystapien[1]++;
+            if (tekst == "🍇") SumaWystapien[2]++;
+            if (tekst == "🍒") SumaWystapien[3]++;
+            if (tekst == "🍍") SumaWystapien[4]++;
+            if (tekst == "🥝") SumaWystapien[5]++;
+            if (tekst == "🎁") SumaWystapien[6]++;
+        }
+    }
+
+    // Sprawdzamy wygrane i budujemy wynik wygranej
+    if (SumaWystapien[0] >= l_japko) {
+        wygrana += w_japko*stawka;
+        wynikWygranej += QString("🍎 %1: %2\n").arg(SumaWystapien[0]).arg(w_japko);
+    }
+    if (SumaWystapien[1] >= l_banan) {
+        wygrana += w_banan*stawka;
+        wynikWygranej += QString("🍌 %1: %2\n").arg(SumaWystapien[1]).arg(w_banan);
+    }
+    if (SumaWystapien[2] >= l_winogrono) {
+        wygrana += w_winogrono*stawka;
+        wynikWygranej += QString("🍇 %1: %2\n").arg(SumaWystapien[2]).arg(w_winogrono);
+    }
+    if (SumaWystapien[3] >= l_wisnia) {
+        wygrana += w_wisnia*stawka;
+        wynikWygranej += QString("🍒 %1: %2\n").arg(SumaWystapien[3]).arg(w_wisnia);
+    }
+    if (SumaWystapien[4] >= l_ananas) {
+        wygrana += w_ananas*stawka;
+        wynikWygranej += QString("🍍 %1: %2\n").arg(SumaWystapien[4]).arg(w_ananas);
+    }
+    if (SumaWystapien[5] >= l_kiwi) {
+        wygrana += w_kiwi*stawka;
+        wynikWygranej += QString("🥝 %1: %2\n").arg(SumaWystapien[5]).arg(w_kiwi);
+    }
+
+    // Jeśli jest wygrana, aktualizujemy saldo i wyświetlamy wynik
+    if (wygrana > 0)
+    {
+        saldo += wygrana;  // Dodajemy wygraną do salda
+        AktualizujSaldo();  // Funkcja do aktualizacji etykiety salda w UI
+
+        // Wyświetlamy wynik wygranej w odpowiednim formacie
+        ui->infoLabel->setText(QString("Wygrana: %1\n%2").arg(wygrana).arg(wynikWygranej));
+    }
+    else
+    {
+        ui->infoLabel->setText("Brak wygranej.");
+    }
+}
+
+
 
 
 void MainWindow::LosujOdNowa()
 {
+    if (saldo < stawka) {
+        // Jeśli saldo jest mniejsze niż stawka, to po prostu kończymy funkcję.
+        ui->maszyna->setEnabled(false);  // Możesz wyłączyć maszynę albo przycisk
+        return; // Zatrzymuje dalsze wykonywanie funkcji
+    }
+
     int rows = gridLabels.size();
     int cols = rows > 0 ? gridLabels[0].size() : 0;
 
@@ -95,6 +197,15 @@ void MainWindow::LosujOdNowa()
             gridLabels[i][j]->setText(owoce[owoc]);
         }
     }
+
+    if (saldo < stawka) {
+        // np. zablokuj guzik albo wyświetl że nie masz na spin
+        return;
+    }
+    saldo -= stawka;
+    AktualizujSaldo();
+    SprawdzWygrana();
+
 }
 
 void MainWindow::WczytajPrawdopodobienstwa()
@@ -142,7 +253,41 @@ void MainWindow::WczytajPrawdopodobienstwa()
     ui->KiwiEdit->setText(QString::number(p_kiwi));
     ui->BonusEdit->setText(QString::number(p_bonus));
 
+
+
+    l_japko = ui->liczbaSymboliLineEdit_Japko->text().isEmpty() ? 8 : ui->liczbaSymboliLineEdit_Japko->text().toInt();
+    l_banan = ui->liczbaSymboliLineEdit_Banan->text().isEmpty() ? 8 : ui->liczbaSymboliLineEdit_Banan->text().toInt();
+    l_winogrono = ui->liczbaSymboliLineEdit_Winogronko->text().isEmpty() ? 8 : ui->liczbaSymboliLineEdit_Winogronko->text().toInt();
+    l_wisnia = ui->liczbaSymboliLineEdit_Wisnia->text().isEmpty() ? 8 : ui->liczbaSymboliLineEdit_Wisnia->text().toInt();
+    l_ananas = ui->liczbaSymboliLineEdit_Ananas->text().isEmpty() ? 8 : ui->liczbaSymboliLineEdit_Ananas->text().toInt();
+    l_kiwi = ui->liczbaSymboliLineEdit_Kiwi->text().isEmpty() ? 8 : ui->liczbaSymboliLineEdit_Kiwi->text().toInt();
+    l_bonus = ui->liczbaSymboliLineEdit_Bonus->text().isEmpty() ? 4 : ui->liczbaSymboliLineEdit_Bonus->text().toInt();
+
+
+    w_japko = ui->kwotaWygranejLineEdit_Japko->text().isEmpty() ? 0.75 : ui->kwotaWygranejLineEdit_Japko->text().toFloat();
+    w_banan = ui->kwotaWygranejLineEdit_Banan->text().isEmpty() ? 1.25 : ui->kwotaWygranejLineEdit_Banan->text().toFloat();
+    w_winogrono = ui->kwotaWygranejLineEdit_Winogronko->text().isEmpty() ? 2.0 : ui->kwotaWygranejLineEdit_Winogronko->text().toFloat();
+    w_wisnia = ui->kwotaWygranejLineEdit_Wisnia->text().isEmpty() ? 3.0 : ui->kwotaWygranejLineEdit_Wisnia->text().toFloat();
+    w_ananas = ui->kwotaWygranejLineEdit_Ananas->text().isEmpty() ? 5.0 : ui->kwotaWygranejLineEdit_Ananas->text().toFloat();
+    w_kiwi = ui->kwotaWygranejLineEdit_Kiwi->text().isEmpty() ? 8.0 : ui->kwotaWygranejLineEdit_Kiwi->text().toFloat();
 }
+
+void MainWindow::ZwiekszStawke() {
+    if (stawka + 1 <= saldo) {
+        stawka++;
+        ui->StawkaLabel->setText(QString("%1").arg(stawka));
+    }
+}
+
+void MainWindow::ZmniejszStawke() {
+    if (stawka > 1) {
+        stawka--;
+        ui->StawkaLabel->setText(QString("%1").arg(stawka));
+    }
+}
+
+
+
 
 
 
