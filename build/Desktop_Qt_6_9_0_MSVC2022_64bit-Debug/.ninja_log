@@ -1,0 +1,22 @@
+# ninja log v6
+42	175	7680144672991173	Slots_autogen/timestamp	12da0b5a653eedaa
+42	175	7680144672991173	Slots_autogen/mocs_compilation.cpp	12da0b5a653eedaa
+42	175	7680144672991173	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/Slots_autogen/timestamp	12da0b5a653eedaa
+175	1840	7680144674323605	CMakeFiles/Slots.dir/Slots_autogen/mocs_compilation.cpp.obj	de7fa72260ed1324
+179	1928	7680144674363593	CMakeFiles/Slots.dir/main.cpp.obj	8f0c722596c145f6
+1957	2166	7680144692141862	Slots.exe	3899bdcf9df5e3d1
+42	175	7680144672991173	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/Slots_autogen/mocs_compilation.cpp	12da0b5a653eedaa
+182	1957	7680144674393581	CMakeFiles/Slots.dir/mainwindow.cpp.obj	269fd2e9f1bc043a
+157	1791	7680032885229879	CMakeFiles/Slots.dir/probabilityinputwidget.cpp.obj	9cd00a9b2f166ee0
+46	176	7680146563685316	Slots_autogen/timestamp	12da0b5a653eedaa
+46	176	7680146563685316	Slots_autogen/mocs_compilation.cpp	12da0b5a653eedaa
+46	176	7680146563685316	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/Slots_autogen/timestamp	12da0b5a653eedaa
+46	176	7680146563685316	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/Slots_autogen/mocs_compilation.cpp	12da0b5a653eedaa
+177	1792	7680146564991877	CMakeFiles/Slots.dir/Slots_autogen/mocs_compilation.cpp.obj	de7fa72260ed1324
+181	1888	7680146565034064	CMakeFiles/Slots.dir/main.cpp.obj	8f0c722596c145f6
+185	1912	7680146565074064	CMakeFiles/Slots.dir/mainwindow.cpp.obj	269fd2e9f1bc043a
+1912	2132	7680146582345583	Slots.exe	3899bdcf9df5e3d1
+33	1669	7680147275122859	CMakeFiles/Slots.dir/Slots_autogen/mocs_compilation.cpp.obj	de7fa72260ed1324
+37	1750	7680147275164339	CMakeFiles/Slots.dir/main.cpp.obj	8f0c722596c145f6
+40	1761	7680147275198214	CMakeFiles/Slots.dir/mainwindow.cpp.obj	269fd2e9f1bc043a
+1761	1935	7680147292408471	Slots.exe	3899bdcf9df5e3d1
