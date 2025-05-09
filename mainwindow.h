@@ -19,6 +19,8 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void UstawGrid(int **tablica, int rows, int cols);
+    void AnimujGrawitacje();
+    void UsunPolaczoneOwoce(QString a);
     void LosujOdNowa();
     void WczytajPrawdopodobienstwa();
     int PrzypiszOwocek(); // Dodajemy deklarację funkcji PrzypiszOwocek()
