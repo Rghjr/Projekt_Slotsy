@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 #include <QFont>
 #include "ui_mainwindow.h"
+#include <QThread>
+#include <QPropertyAnimation>
+#include <QGraphicsOpacityEffect>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -108,102 +112,177 @@ void MainWindow::AktualizujSaldo()
 
 void MainWindow::SprawdzWygrana()
 {
-    float wygrana = 0;
-    int rows = gridLabels.size();
-    int cols = rows > 0 ? gridLabels[0].size() : 0;
+    bool czywygrane = true;
+    bool zmianawygranej = false;
+    QMap<QString, QPair<int, float>> wynikWygranej; // <owoc, <ile razy wygrane, suma wygranej>>
 
-    int SumaWystapien[7] = {0};
-    QString wynikWygranej; // String do przechowywania wyników
+    do
+    {
+        czywygrane = false;
+        float wygrana = 0;
+        int rows = gridLabels.size();
+        int cols = rows > 0 ? gridLabels[0].size() : 0;
 
-    // Zliczanie wystąpień symboli
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            QString tekst = gridLabels[i][j]->text();
-            if (tekst == "🍎")
-                SumaWystapien[0]++;
-            if (tekst == "🍌")
-                SumaWystapien[1]++;
-            if (tekst == "🍇")
-                SumaWystapien[2]++;
-            if (tekst == "🍒")
-                SumaWystapien[3]++;
-            if (tekst == "🍍")
-                SumaWystapien[4]++;
-            if (tekst == "🥝")
-                SumaWystapien[5]++;
-            if (tekst == "🎁")
-                SumaWystapien[6]++;
+        int SumaWystapien[7] = {0};
+
+        // Zliczanie wystąpień symboli
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                QString tekst = gridLabels[i][j]->text();
+                if (tekst == "🍎")
+                    SumaWystapien[0]++;
+                if (tekst == "🍌")
+                    SumaWystapien[1]++;
+                if (tekst == "🍇")
+                    SumaWystapien[2]++;
+                if (tekst == "🍒")
+                    SumaWystapien[3]++;
+                if (tekst == "🍍")
+                    SumaWystapien[4]++;
+                if (tekst == "🥝")
+                    SumaWystapien[5]++;
+                if (tekst == "🎁")
+                    SumaWystapien[6]++;
+            }
         }
-    }
 
-    // Sprawdzamy wygrane i budujemy wynik wygranej
-    if (SumaWystapien[0] >= l_japko) {
-        wygrana += w_japko * stawka;
-        wynikWygranej += QString(" 🍎 %1: %2 ").arg(SumaWystapien[0]).arg(w_japko);
-    }
-    if (SumaWystapien[1] >= l_banan) {
-        wygrana += w_banan * stawka;
-        wynikWygranej += QString(" 🍌 %1: %2 ").arg(SumaWystapien[1]).arg(w_banan);
-    }
-    if (SumaWystapien[2] >= l_winogrono) {
-        wygrana += w_winogrono * stawka;
-        wynikWygranej += QString(" 🍇 %1: %2 ").arg(SumaWystapien[2]).arg(w_winogrono);
-    }
-    if (SumaWystapien[3] >= l_wisnia) {
-        wygrana += w_wisnia * stawka;
-        wynikWygranej += QString(" 🍒 %1: %2 ").arg(SumaWystapien[3]).arg(w_wisnia);
-    }
-    if (SumaWystapien[4] >= l_ananas) {
-        wygrana += w_ananas * stawka;
-        wynikWygranej += QString(" 🍍 %1: %2 ").arg(SumaWystapien[4]).arg(w_ananas);
-    }
-    if (SumaWystapien[5] >= l_kiwi) {
-        wygrana += w_kiwi * stawka;
-        wynikWygranej += QString(" 🥝 %1: %2 ").arg(SumaWystapien[5]).arg(w_kiwi);
-    }
+        // Sprawdzamy wygrane i zapisujemy wynik
+        auto dodajWygrana = [&](QString symbol, int liczba, float wartosc) {
+            float nagroda = wartosc * stawka;
+            wygrana += nagroda;
+            if (!wynikWygranej.contains(symbol))
+                wynikWygranej[symbol] = qMakePair(1, nagroda);
+            else {
+                wynikWygranej[symbol].first += 1;
+                wynikWygranej[symbol].second += nagroda;
+            }
+            UsunPolaczoneOwoce(symbol);
+            czywygrane = true;
+        };
 
-    // Jeśli jest wygrana, aktualizujemy saldo i wyświetlamy wynik
-    if (wygrana > 0) {
-        saldo += wygrana;  // Dodajemy wygraną do salda
-        AktualizujSaldo(); // Funkcja do aktualizacji etykiety salda w UI
+        if (SumaWystapien[0] >= l_japko)
+            dodajWygrana("🍎", SumaWystapien[0], w_japko);
+        if (SumaWystapien[1] >= l_banan)
+            dodajWygrana("🍌", SumaWystapien[1], w_banan);
+        if (SumaWystapien[2] >= l_winogrono)
+            dodajWygrana("🍇", SumaWystapien[2], w_winogrono);
+        if (SumaWystapien[3] >= l_wisnia)
+            dodajWygrana("🍒", SumaWystapien[3], w_wisnia);
+        if (SumaWystapien[4] >= l_ananas)
+            dodajWygrana("🍍", SumaWystapien[4], w_ananas);
+        if (SumaWystapien[5] >= l_kiwi)
+            dodajWygrana("🥝", SumaWystapien[5], w_kiwi);
 
-        // Wyświetlamy wynik wygranej w odpowiednim formacie
-        ui->infoLabel->setText(QString("Wygrana: %1 \n %2").arg(wygrana).arg(wynikWygranej));
-    } else {
-        ui->infoLabel->setText("Brak wygranej");
-    }
+        // Jeśli coś wygrało – aktualizacja UI
+        if (czywygrane)
+        {
+            saldo += wygrana;
+            if (saldo < 0) saldo = 0;
+            AktualizujSaldo();
+            zmianawygranej = true;
+
+            QString szczegolyWygranej;
+            for (auto it = wynikWygranej.begin(); it != wynikWygranej.end(); ++it) {
+                szczegolyWygranej += QString("%1x %2 : %3\n")
+                .arg(it.value().first)
+                    .arg(it.key())
+                    .arg(it.value().second);
+            }
+
+            float sumaWygranych = 0;
+            for (auto it = wynikWygranej.begin(); it != wynikWygranej.end(); ++it) {
+                sumaWygranych += it.value().second;
+            }
+            ui->infoLabel->setText(QString("Wygrana: %1\n%2").arg(sumaWygranych).arg(szczegolyWygranej));
+        }
+        else
+        {
+            if (zmianawygranej == false) ui->infoLabel->setText("Brak wygranej");
+        }
+
+    } while (czywygrane);
 }
+
+
 
 void MainWindow::LosujOdNowa()
 {
     if (saldo < stawka) {
-        // Jeśli saldo jest mniejsze niż stawka, to po prostu kończymy funkcję.
-        ui->maszyna->setEnabled(false); // Możesz wyłączyć maszynę albo przycisk
-        return;                         // Zatrzymuje dalsze wykonywanie funkcji
+        ui->maszyna->setEnabled(false);
+        return;
     }
 
+    ui->SPINPRZYCISK->setEnabled(false);
     int rows = gridLabels.size();
     int cols = rows > 0 ? gridLabels[0].size() : 0;
 
-    // Przypisujemy wartości progów z UI
     WczytajPrawdopodobienstwa();
+    QStringList owoce = {"🍎", "🍌", "🍇", "🍒", "🍍", "🥝", "🎁"};
 
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            int owoc = PrzypiszOwocek(); // Używamy nowej funkcji z dynamicznymi progami
-            QStringList owoce = {"🍎", "🍌", "🍇", "🍒", "🍍", "🥝", "🎁"};
-            gridLabels[i][j]->setText(owoce[owoc]);
+    int i = rows - 1;
+    int j = 0;
+
+    while (j < cols) {
+        int owoc = PrzypiszOwocek();
+        QLabel *label = gridLabels[i][j];
+        QString nowyTekst = owoce[owoc];
+
+        if (label) {
+            // Animacja
+            auto *efekt = new QGraphicsOpacityEffect(label);
+            label->setGraphicsEffect(efekt);
+
+            QPropertyAnimation *zanik = new QPropertyAnimation(efekt, "opacity");
+            zanik->setDuration(150);
+            zanik->setStartValue(0.0);
+            zanik->setEndValue(1.0);
+
+            label->setText(nowyTekst);
+            zanik->start(QAbstractAnimation::DeleteWhenStopped);
+        }
+
+        QCoreApplication::processEvents();
+        QThread::msleep(40);
+
+        // Następny element
+        if (--i < 0) {
+            i = rows - 1;
+            ++j;
         }
     }
 
-    if (saldo < stawka) {
-        // np. zablokuj guzik albo wyświetl że nie masz na spin
-        return;
-    }
     saldo -= stawka;
     AktualizujSaldo();
     SprawdzWygrana();
+    ui->SPINPRZYCISK->setEnabled(true);
 }
+
+
+void MainWindow::UsunPolaczoneOwoce(QString a)
+{
+    int rows = gridLabels.size();
+    int cols = rows > 0 ? gridLabels[0].size() : 0;
+    QStringList owoce = {"🍎", "🍌", "🍇", "🍒", "🍍", "🥝", "🎁"};
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            QString tekst = gridLabels[i][j]->text();
+            if (tekst == a)
+            {
+                int x = PrzypiszOwocek();
+                if (x==0) gridLabels[i][j]->setText(owoce[0]);
+                else if (x==1) gridLabels[i][j]->setText(owoce[1]);
+                     else if (x==2) gridLabels[i][j]->setText(owoce[2]);
+                          else if (x==3) gridLabels[i][j]->setText(owoce[3]);
+                               else if (x==4) gridLabels[i][j]->setText(owoce[4]);
+                                    else if (x==5) gridLabels[i][j]->setText(owoce[5]);
+                                         else if (x==6) gridLabels[i][j]->setText(owoce[6]);
+            }
+        }
+    }
+}
+
+
 
 void MainWindow::WczytajPrawdopodobienstwa()
 {

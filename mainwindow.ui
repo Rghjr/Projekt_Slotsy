@@ -37,16 +37,16 @@
         <item row="2" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QPushButton" name="plusButton">
+           <widget class="QPushButton" name="minusButton">
             <property name="text">
-             <string>+</string>
+             <string>-</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="minusButton">
+           <widget class="QPushButton" name="plusButton">
             <property name="text">
-             <string>-</string>
+             <string>+</string>
             </property>
            </widget>
           </item>
@@ -380,7 +380,7 @@
      <x>0</x>
      <y>0</y>
      <width>780</width>
-     <height>21</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>
