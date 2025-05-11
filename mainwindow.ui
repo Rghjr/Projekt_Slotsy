@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>780</width>
-    <height>610</height>
+    <width>721</width>
+    <height>589</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -71,6 +71,26 @@
            <widget class="QPushButton" name="SPINPRZYCISK">
             <property name="text">
              <string>SPINEK</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="AUTOSPINPRZYCISK">
+            <property name="text">
+             <string>AUTOSPIN</string>
             </property>
            </widget>
           </item>
@@ -262,9 +282,6 @@
        <item row="7" column="2">
         <widget class="QLineEdit" name="liczbaSymboliLineEdit_Bonus"/>
        </item>
-       <item row="7" column="3">
-        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Bonus"/>
-       </item>
       </layout>
      </widget>
     </item>
@@ -379,7 +396,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>780</width>
+     <width>721</width>
      <height>17</height>
     </rect>
    </property>

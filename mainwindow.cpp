@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QPropertyAnimation>
 #include <QGraphicsOpacityEffect>
+#include <QTimer>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -43,15 +44,22 @@ MainWindow::MainWindow(QWidget *parent)
     // Połączenie przycisku z funkcją
     connect(ui->SPINPRZYCISK, &QPushButton::clicked, this, &MainWindow::LosujOdNowa);
 
+    ui->AUTOSPINPRZYCISK->setCheckable(true);
+    connect(ui->AUTOSPINPRZYCISK, &QPushButton::toggled, this, &MainWindow::Autospin);
+
     ui->StawkaLabel->setText("Stawka: 5");
     connect(ui->plusButton, &QPushButton::clicked, this, &MainWindow::ZwiekszStawke);
     connect(ui->minusButton, &QPushButton::clicked, this, &MainWindow::ZmniejszStawke);
 }
 
+
+
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+
 
 void MainWindow::UstawGrid(int **tablica, int rows, int cols)
 {
@@ -81,6 +89,8 @@ void MainWindow::UstawGrid(int **tablica, int rows, int cols)
     }
 }
 
+
+
 int MainWindow::PrzypiszOwocek()
 {
     // Zbieramy wartości prawdopodobieństw przed losowaniem
@@ -105,10 +115,14 @@ int MainWindow::PrzypiszOwocek()
     return 6;     // Bonus (domyślnie)
 }
 
+
+
 void MainWindow::AktualizujSaldo()
 {
     ui->saldoLabel->setText(QString("Aktualne saldo: %1").arg(saldo));
 }
+
+
 
 void MainWindow::SprawdzWygrana()
 {
@@ -258,25 +272,40 @@ void MainWindow::LosujOdNowa()
 }
 
 
+
+void MainWindow::Autospin(bool checked)
+{
+    if (checked)
+    {
+        LosujOdNowa();
+        QTimer* timer = new QTimer(this);
+        connect(timer, &QTimer::timeout, this, &MainWindow::LosujOdNowa);
+        timer->start(2000); // 2000 ms = 2 sekundy
+    }
+    else
+    {
+        for (auto& timer : findChildren<QTimer*>()) {
+            timer->stop();
+        }
+    }
+}
+
+
+
 void MainWindow::UsunPolaczoneOwoce(QString a)
 {
-    int rows = gridLabels.size();
-    int cols = rows > 0 ? gridLabels[0].size() : 0;
-    QStringList owoce = {"🍎", "🍌", "🍇", "🍒", "🍍", "🥝", "🎁"};
+    const QStringList owoce = {"🍎", "🍌", "🍇", "🍒", "🍍", "🥝", "🎁"};
+    const int rows = gridLabels.size();
+    const int cols = rows > 0 ? gridLabels[0].size() : 0;
 
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            QString tekst = gridLabels[i][j]->text();
-            if (tekst == a)
-            {
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            QLabel* label = gridLabels[i][j];
+            if (label->text() == a) {
                 int x = PrzypiszOwocek();
-                if (x==0) gridLabels[i][j]->setText(owoce[0]);
-                else if (x==1) gridLabels[i][j]->setText(owoce[1]);
-                     else if (x==2) gridLabels[i][j]->setText(owoce[2]);
-                          else if (x==3) gridLabels[i][j]->setText(owoce[3]);
-                               else if (x==4) gridLabels[i][j]->setText(owoce[4]);
-                                    else if (x==5) gridLabels[i][j]->setText(owoce[5]);
-                                         else if (x==6) gridLabels[i][j]->setText(owoce[6]);
+                if (x >= 0 && x < owoce.size()) {
+                    label->setText(owoce[x]);
+                }
             }
         }
     }
@@ -377,6 +406,8 @@ void MainWindow::WczytajPrawdopodobienstwa()
                  : ui->kwotaWygranejLineEdit_Kiwi->text().toFloat();
 }
 
+
+
 void MainWindow::ZwiekszStawke()
 {
     if (stawka + 1 <= saldo) {
@@ -385,6 +416,8 @@ void MainWindow::ZwiekszStawke()
     }
 }
 
+
+
 void MainWindow::ZmniejszStawke()
 {
     if (stawka > 1) {
@@ -392,4 +425,3 @@ void MainWindow::ZmniejszStawke()
         ui->StawkaLabel->setText(QString("Stawka: %1").arg(stawka));
     }
 }
-

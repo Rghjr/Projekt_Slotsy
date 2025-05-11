@@ -20,6 +20,7 @@ public:
     ~MainWindow();
     void UstawGrid(int **tablica, int rows, int cols);
     void AnimujGrawitacje();
+    void Autospin(bool checked);
     void UsunPolaczoneOwoce(QString a);
     void LosujOdNowa();
     void WczytajPrawdopodobienstwa();
