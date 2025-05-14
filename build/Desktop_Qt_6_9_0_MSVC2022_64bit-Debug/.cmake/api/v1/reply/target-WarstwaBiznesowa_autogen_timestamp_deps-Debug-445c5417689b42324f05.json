@@ -1,0 +1,27 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"WarstwaBiznesowa/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"id" : "WarstwaBiznesowa_autogen_timestamp_deps::@67b38b7b1e0a2ce7482a",
+	"isGeneratorProvided" : true,
+	"name" : "WarstwaBiznesowa_autogen_timestamp_deps",
+	"paths" : 
+	{
+		"build" : "WarstwaBiznesowa",
+		"source" : "WarstwaBiznesowa"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

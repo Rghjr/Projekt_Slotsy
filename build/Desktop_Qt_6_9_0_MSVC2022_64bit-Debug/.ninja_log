@@ -1,0 +1,49 @@
+# ninja log v6
+42	158	7688852721352380	Slots_autogen/timestamp	12da0b5a653eedaa
+42	158	7688852721352380	Slots_autogen/mocs_compilation.cpp	12da0b5a653eedaa
+2245	2417	7688852743378354	Slots.exe	3899bdcf9df5e3d1
+159	1789	7688852722516509	CMakeFiles/Slots.dir/Slots_autogen/mocs_compilation.cpp.obj	de7fa72260ed1324
+163	1878	7688852722556503	CMakeFiles/Slots.dir/main.cpp.obj	8f0c722596c145f6
+42	158	7688852721352380	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/Slots_autogen/timestamp	12da0b5a653eedaa
+42	158	7688852721352380	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/Slots_autogen/mocs_compilation.cpp	12da0b5a653eedaa
+166	2245	7688852722588745	CMakeFiles/Slots.dir/mainwindow.cpp.obj	269fd2e9f1bc043a
+28	329	7689519671469937	UI/UI_autogen/timestamp	b16a77f2adf6a28d
+28	329	7689519671469937	UI/UI_autogen/mocs_compilation.cpp	b16a77f2adf6a28d
+28	329	7689519671469937	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/UI/UI_autogen/timestamp	b16a77f2adf6a28d
+28	329	7689519671469937	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/UI/UI_autogen/mocs_compilation.cpp	b16a77f2adf6a28d
+331	367	7689519672309890	UI/ui_oknostartowe.h	e4a4dd3e338218cc
+331	367	7689519672309890	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/UI/ui_oknostartowe.h	e4a4dd3e338218cc
+338	369	7689519672330961	UI/ui_oknogra1.h	f067108219b37095
+338	369	7689519672330961	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/UI/ui_oknogra1.h	f067108219b37095
+370	2092	7689519672400796	UI/CMakeFiles/UI.dir/UI_autogen/mocs_compilation.cpp.obj	c6d85a40dd4502a4
+375	2343	7689519672451315	UI/CMakeFiles/UI.dir/oknostartowe.cpp.obj	27c4c88ac728ba40
+379	2435	7689519672477128	UI/CMakeFiles/UI.dir/oknogra1.cpp.obj	f117d5f78dbd34c3
+2435	2517	7689519693055066	UI/UI.lib	cdaa7347309cf9a2
+40	161	7689520380066647	WarstwaBiznesowa/WarstwaBiznesowa_autogen/timestamp	ee4e59f3dd901e69
+40	161	7689520380066647	WarstwaBiznesowa/WarstwaBiznesowa_autogen/mocs_compilation.cpp	ee4e59f3dd901e69
+40	161	7689520380066647	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/WarstwaBiznesowa/WarstwaBiznesowa_autogen/timestamp	ee4e59f3dd901e69
+40	161	7689520380066647	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/WarstwaBiznesowa/WarstwaBiznesowa_autogen/mocs_compilation.cpp	ee4e59f3dd901e69
+162	380	7689520380545528	WarstwaBiznesowa/CMakeFiles/WarstwaBiznesowa.dir/WarstwaBiznesowa_autogen/mocs_compilation.cpp.obj	a29d2e7b466f0c1e
+166	675	7689520380585744	WarstwaBiznesowa/CMakeFiles/WarstwaBiznesowa.dir/warstwabiznesowa.cpp.obj	b9a4ee9f9169b153
+675	1007	7689520388790348	WarstwaBiznesowa/WarstwaBiznesowa.dll	4dea787776214a97
+675	1007	7689520388790348	WarstwaBiznesowa/WarstwaBiznesowa.lib	4dea787776214a97
+63	1780	7689520379560068	UI/CMakeFiles/UI.dir/UI_autogen/mocs_compilation.cpp.obj	c6d85a40dd4502a4
+67	2062	7689520379600069	UI/CMakeFiles/UI.dir/oknostartowe.cpp.obj	27c4c88ac728ba40
+71	2146	7689520379632871	UI/CMakeFiles/UI.dir/oknogra1.cpp.obj	f117d5f78dbd34c3
+2146	2216	7689520400395001	UI/UI.lib	cdaa7347309cf9a2
+2217	2335	7689520401800329	Slots_autogen/timestamp	12da0b5a653eedaa
+2217	2335	7689520401800329	Slots_autogen/mocs_compilation.cpp	12da0b5a653eedaa
+2217	2335	7689520401800329	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/Slots_autogen/timestamp	12da0b5a653eedaa
+2217	2335	7689520401800329	C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/Slots_autogen/mocs_compilation.cpp	12da0b5a653eedaa
+2336	2400	7689520402284723	CMakeFiles/Slots.dir/Slots_autogen/mocs_compilation.cpp.obj	f67607eeaf80286b
+2340	3541	7689520402324724	CMakeFiles/Slots.dir/main.cpp.obj	dc2620fdb26ef0c9
+3541	3785	7689520414343613	Slots.exe	3521090b6d6fa685
+33	610	7689520487858888	WarstwaBiznesowa/CMakeFiles/WarstwaBiznesowa.dir/warstwabiznesowa.cpp.obj	b9a4ee9f9169b153
+611	727	7689520493636203	WarstwaBiznesowa/WarstwaBiznesowa.dll	4dea787776214a97
+611	727	7689520493636203	WarstwaBiznesowa/WarstwaBiznesowa.lib	4dea787776214a97
+38	1651	7689520487900680	UI/CMakeFiles/UI.dir/UI_autogen/mocs_compilation.cpp.obj	c6d85a40dd4502a4
+41	1952	7689520487942059	UI/CMakeFiles/UI.dir/oknostartowe.cpp.obj	27c4c88ac728ba40
+44	2055	7689520487973430	UI/CMakeFiles/UI.dir/oknogra1.cpp.obj	f117d5f78dbd34c3
+2056	2121	7689520508088534	UI/UI.lib	cdaa7347309cf9a2
+2121	3311	7689520508740813	CMakeFiles/Slots.dir/main.cpp.obj	dc2620fdb26ef0c9
+3312	3505	7689520520641276	Slots.exe	3521090b6d6fa685
