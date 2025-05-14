@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef OKNOGRA1_H
+#define OKNOGRA1_H
 
 #include <QLabel>
 #include <QMainWindow>
@@ -7,17 +7,17 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class MainWindow;
+class OknoGra1;
 }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class OknoGra1 : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    explicit OknoGra1(QWidget *parent = nullptr);
+    ~OknoGra1();
     void UstawGrid(int **tablica, int rows, int cols);
     void AnimujGrawitacje();
     void Autospin(bool checked);
@@ -38,10 +38,10 @@ public:
 
 
 private:
-    Ui::MainWindow *ui;
+    Ui::OknoGra1 *ui;
     QVector<QVector<QLabel *>> gridLabels; // przechowujemy QLabel'e
     float saldo = 100;
     int stawka = 5;
 };
 
-#endif // MAINWINDOW_H
+#endif // OKNOGRA1_H

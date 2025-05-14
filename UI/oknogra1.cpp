@@ -1,15 +1,15 @@
-#include "mainwindow.h"
+#include "oknogra1.h"
+#include "ui_oknogra1.h"
 #include <QFont>
-#include "ui_mainwindow.h"
 #include <QThread>
 #include <QPropertyAnimation>
 #include <QGraphicsOpacityEffect>
 #include <QTimer>
 
 
-MainWindow::MainWindow(QWidget *parent)
+OknoGra1::OknoGra1(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    , ui(new Ui::OknoGra1)
 {
     ui->setupUi(this);
 
@@ -42,26 +42,26 @@ MainWindow::MainWindow(QWidget *parent)
     WczytajPrawdopodobienstwa();
 
     // Połączenie przycisku z funkcją
-    connect(ui->SPINPRZYCISK, &QPushButton::clicked, this, &MainWindow::LosujOdNowa);
+    connect(ui->SPINPRZYCISK, &QPushButton::clicked, this, &OknoGra1::LosujOdNowa);
 
     ui->AUTOSPINPRZYCISK->setCheckable(true);
-    connect(ui->AUTOSPINPRZYCISK, &QPushButton::toggled, this, &MainWindow::Autospin);
+    connect(ui->AUTOSPINPRZYCISK, &QPushButton::toggled, this, &OknoGra1::Autospin);
 
     ui->StawkaLabel->setText("Stawka: 5");
-    connect(ui->plusButton, &QPushButton::clicked, this, &MainWindow::ZwiekszStawke);
-    connect(ui->minusButton, &QPushButton::clicked, this, &MainWindow::ZmniejszStawke);
+    connect(ui->plusButton, &QPushButton::clicked, this, &OknoGra1::ZwiekszStawke);
+    connect(ui->minusButton, &QPushButton::clicked, this, &OknoGra1::ZmniejszStawke);
 }
 
 
 
-MainWindow::~MainWindow()
+OknoGra1::~OknoGra1()
 {
     delete ui;
 }
 
 
 
-void MainWindow::UstawGrid(int **tablica, int rows, int cols)
+void OknoGra1::UstawGrid(int **tablica, int rows, int cols)
 {
     QStringList owoce = {"🍎", "🍌", "🍇", "🍒", "🍍", "🥝", "🎁"};
 
@@ -91,7 +91,7 @@ void MainWindow::UstawGrid(int **tablica, int rows, int cols)
 
 
 
-int MainWindow::PrzypiszOwocek()
+int OknoGra1::PrzypiszOwocek()
 {
     // Zbieramy wartości prawdopodobieństw przed losowaniem
     WczytajPrawdopodobienstwa();
@@ -117,14 +117,14 @@ int MainWindow::PrzypiszOwocek()
 
 
 
-void MainWindow::AktualizujSaldo()
+void OknoGra1::AktualizujSaldo()
 {
     ui->saldoLabel->setText(QString("Aktualne saldo: %1").arg(saldo));
 }
 
 
 
-void MainWindow::SprawdzWygrana()
+void OknoGra1::SprawdzWygrana()
 {
     bool czywygrane = true;
     bool zmianawygranej = false;
@@ -222,7 +222,7 @@ void MainWindow::SprawdzWygrana()
 
 
 
-void MainWindow::LosujOdNowa()
+void OknoGra1::LosujOdNowa()
 {
     if (saldo < stawka) {
         ui->maszyna->setEnabled(false);
@@ -276,13 +276,13 @@ void MainWindow::LosujOdNowa()
 
 
 
-void MainWindow::Autospin(bool checked)
+void OknoGra1::Autospin(bool checked)
 {
     if (checked)
     {
         if (!autoSpinTimer) {
             autoSpinTimer = new QTimer(this);
-            connect(autoSpinTimer, &QTimer::timeout, this, &MainWindow::LosujOdNowa);
+            connect(autoSpinTimer, &QTimer::timeout, this, &OknoGra1::LosujOdNowa);
         }
         LosujOdNowa();
         autoSpinTimer->start(2000);
@@ -298,7 +298,7 @@ void MainWindow::Autospin(bool checked)
 
 
 
-void MainWindow::UsunPolaczoneOwoce(QString a)
+void OknoGra1::UsunPolaczoneOwoce(QString a)
 {
     const QStringList owoce = {"🍎", "🍌", "🍇", "🍒", "🍍", "🥝", "🎁"};
     const int rows = gridLabels.size();
@@ -319,7 +319,7 @@ void MainWindow::UsunPolaczoneOwoce(QString a)
 
 
 
-void MainWindow::WczytajPrawdopodobienstwa()
+void OknoGra1::WczytajPrawdopodobienstwa()
 {
     // Pobieramy wartości od użytkownika, jeśli pole nie jest puste
     p_japko = ui->JapkoEdit->text().isEmpty() ? 30 : ui->JapkoEdit->text().toInt();
@@ -414,7 +414,7 @@ void MainWindow::WczytajPrawdopodobienstwa()
 
 
 
-void MainWindow::ZwiekszStawke()
+void OknoGra1::ZwiekszStawke()
 {
     if (stawka + 1 <= saldo) {
         stawka++;
@@ -424,7 +424,7 @@ void MainWindow::ZwiekszStawke()
 
 
 
-void MainWindow::ZmniejszStawke()
+void OknoGra1::ZmniejszStawke()
 {
     if (stawka > 1) {
         stawka--;
