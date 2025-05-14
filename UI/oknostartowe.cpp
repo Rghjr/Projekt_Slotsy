@@ -1,5 +1,6 @@
 #include "oknostartowe.h"
 #include "oknogra1.h"
+#include "oknogra2.h"
 #include "ui_oknostartowe.h"
 #include <QProcess>
 #include <QFile>
@@ -52,7 +53,10 @@ void OknoStartowe::on_firstGameButton_clicked()
 
 void OknoStartowe::on_secondGameButton_clicked()
 {
+    close();
 
+    OknoGra2 *gra = new OknoGra2(); // Tworzenia okna z grą
+    gra->show();
 }
 
 void OknoStartowe::on_exitButton_clicked()
