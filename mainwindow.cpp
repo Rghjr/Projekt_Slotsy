@@ -207,7 +207,10 @@ void MainWindow::SprawdzWygrana()
             for (auto it = wynikWygranej.begin(); it != wynikWygranej.end(); ++it) {
                 sumaWygranych += it.value().second;
             }
+
             ui->infoLabel->setText(QString("Wygrana: %1\n%2").arg(sumaWygranych).arg(szczegolyWygranej));
+            QCoreApplication::processEvents(); // <- pozwól GUI się zaktualizować
+            QThread::sleep(1); // <- i dopiero teraz śpimy
         }
         else
         {
@@ -277,18 +280,21 @@ void MainWindow::Autospin(bool checked)
 {
     if (checked)
     {
+        if (!autoSpinTimer) {
+            autoSpinTimer = new QTimer(this);
+            connect(autoSpinTimer, &QTimer::timeout, this, &MainWindow::LosujOdNowa);
+        }
         LosujOdNowa();
-        QTimer* timer = new QTimer(this);
-        connect(timer, &QTimer::timeout, this, &MainWindow::LosujOdNowa);
-        timer->start(2000); // 2000 ms = 2 sekundy
+        autoSpinTimer->start(2000);
     }
     else
     {
-        for (auto& timer : findChildren<QTimer*>()) {
-            timer->stop();
+        if (autoSpinTimer) {
+            autoSpinTimer->stop();
         }
     }
 }
+
 
 
 
