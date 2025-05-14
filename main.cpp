@@ -1,8 +1,9 @@
 #include <QApplication>
-#include "UI/oknostartowe.h"
-#include "oknostartowe.h"
 #include <cstdlib>
 #include <ctime>
+#include "UI/oknostartowe.h"
+#include "oknostartowe.h"
+
 
 int main(int argc, char *argv[])
 {
