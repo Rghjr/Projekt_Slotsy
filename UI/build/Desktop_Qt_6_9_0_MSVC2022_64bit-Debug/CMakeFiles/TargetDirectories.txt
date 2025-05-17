@@ -1,0 +1,5 @@
+C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/UI/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/CMakeFiles/UI.dir
+C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/UI/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/CMakeFiles/edit_cache.dir
+C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/UI/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/CMakeFiles/rebuild_cache.dir
+C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/UI/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/CMakeFiles/UI_autogen_timestamp_deps.dir
+C:/Users/kryst/Desktop/Studia/Języki i paradygmaty programowania/Sem II/Slots/UI/build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/CMakeFiles/UI_autogen.dir
