@@ -1,0 +1,71 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"WarstwaBiznesowa/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"id" : "WarstwaBiznesowa_autogen_timestamp_deps::@67b38b7b1e0a2ce7482a"
+		}
+	],
+	"id" : "WarstwaBiznesowa_autogen::@67b38b7b1e0a2ce7482a",
+	"isGeneratorProvided" : true,
+	"name" : "WarstwaBiznesowa_autogen",
+	"paths" : 
+	{
+		"build" : "WarstwaBiznesowa",
+		"source" : "WarstwaBiznesowa"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		},
+		{
+			"name" : "CMake Rules",
+			"sourceIndexes" : 
+			[
+				1,
+				2
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/WarstwaBiznesowa/CMakeFiles/WarstwaBiznesowa_autogen",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/WarstwaBiznesowa/CMakeFiles/WarstwaBiznesowa_autogen.rule",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "build/Desktop_Qt_6_9_0_MSVC2022_64bit-Debug/WarstwaBiznesowa/WarstwaBiznesowa_autogen/timestamp.rule",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "UTILITY"
+}

@@ -143,6 +143,36 @@
     <item row="0" column="3" rowspan="2" colspan="2">
      <widget class="QWidget" name="widget" native="true">
       <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="3">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Mnoznik</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="JapkoEdit"/>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="ObrazekKiwi">
+         <property name="text">
+          <string>🥝</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="ObrazekBanan">
+         <property name="text">
+          <string>🍌</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="3">
+        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Wisnia"/>
+       </item>
        <item row="0" column="1">
         <widget class="QLabel" name="label">
          <property name="text">
@@ -152,6 +182,88 @@
           <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="WisniaEdit"/>
+       </item>
+       <item row="8" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Bonus"/>
+       </item>
+       <item row="4" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Wisnia"/>
+       </item>
+       <item row="5" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Ananas"/>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLineEdit" name="BonusEdit"/>
+       </item>
+       <item row="3" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Winogronko"/>
+       </item>
+       <item row="6" column="3">
+        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Kiwi"/>
+       </item>
+       <item row="8" column="3">
+        <widget class="QLineEdit" name="liczbaFreeSpinowLineEdit"/>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="AnanasEdit"/>
+       </item>
+       <item row="1" column="3">
+        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Japko"/>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="ObrazekBonus">
+         <property name="text">
+          <string>🎁</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Banan"/>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Japko"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="ObrazekWinogrono">
+         <property name="text">
+          <string>🍇</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="ObrazekAnanas">
+         <property name="text">
+          <string>🍍</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Winogronko"/>
+       </item>
+       <item row="9" column="3">
+        <widget class="QLineEdit" name="liczbaDodatkowychSpinowLineEdit"/>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="WinogronkoEdit"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="ObrazekJapko">
+         <property name="text">
+          <string>🍎</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QLineEdit" name="KiwiEdit"/>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="BananEdit"/>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Banan"/>
        </item>
        <item row="0" column="2">
         <widget class="QLabel" name="label_2">
@@ -163,63 +275,11 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Mnoznik</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
+       <item row="6" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Kiwi"/>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="ObrazekJapko">
-         <property name="text">
-          <string>🍎</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="JapkoEdit"/>
-       </item>
-       <item row="1" column="2">
-        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Japko"/>
-       </item>
-       <item row="1" column="3">
-        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Japko"/>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="ObrazekBanan">
-         <property name="text">
-          <string>🍌</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="BananEdit"/>
-       </item>
-       <item row="2" column="2">
-        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Banan"/>
-       </item>
-       <item row="2" column="3">
-        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Banan"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="ObrazekWinogrono">
-         <property name="text">
-          <string>🍇</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="WinogronkoEdit"/>
-       </item>
-       <item row="3" column="2">
-        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Winogronko"/>
-       </item>
-       <item row="3" column="3">
-        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Winogronko"/>
+       <item row="5" column="3">
+        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Ananas"/>
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="ObrazekWisnia">
@@ -228,59 +288,19 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="WisniaEdit"/>
-       </item>
-       <item row="4" column="2">
-        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Wisnia"/>
-       </item>
-       <item row="4" column="3">
-        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Wisnia"/>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="ObrazekAnanas">
+       <item row="7" column="3">
+        <widget class="QLabel" name="LiczbaFreeSpinowTekst">
          <property name="text">
-          <string>🍍</string>
+          <string>Liczba Free spinow</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
-        <widget class="QLineEdit" name="AnanasEdit"/>
-       </item>
-       <item row="5" column="2">
-        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Ananas"/>
-       </item>
-       <item row="5" column="3">
-        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Ananas"/>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="ObrazekKiwi">
+       <item row="9" column="2">
+        <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>🥝</string>
+          <string>Liczba dodatkowych</string>
          </property>
         </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QLineEdit" name="KiwiEdit"/>
-       </item>
-       <item row="6" column="2">
-        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Kiwi"/>
-       </item>
-       <item row="6" column="3">
-        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Kiwi"/>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="ObrazekBonus">
-         <property name="text">
-          <string>🎁</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QLineEdit" name="BonusEdit"/>
-       </item>
-       <item row="7" column="2">
-        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Bonus"/>
        </item>
       </layout>
      </widget>
@@ -389,6 +409,13 @@
       </item>
      </layout>
     </item>
+    <item row="10" column="0">
+     <widget class="QLabel" name="liczbaFreeSpinow">
+      <property name="text">
+       <string>FreeSpiny: </string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -397,7 +424,7 @@
      <x>0</x>
      <y>0</y>
      <width>721</width>
-     <height>21</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>
