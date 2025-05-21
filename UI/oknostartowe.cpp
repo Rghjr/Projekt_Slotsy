@@ -55,8 +55,23 @@ void OknoStartowe::on_secondGameButton_clicked()
 {
     close();
 
+    int rows = 3, cols = 3;
+    int **tablica = new int *[rows];
+    for (int i = 0; i < rows; ++i) {
+        tablica[i] = new int[cols];
+    }
+
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
+            tablica[i][j] = rand() % 7;
+
     OknoGra2 *gra = new OknoGra2(); // Tworzenia okna z grą
     gra->show();
+    gra->UstawGrid(tablica, rows, cols);
+
+    for (int i = 0; i < rows; ++i)
+        delete[] tablica[i];
+    delete[] tablica;
 }
 
 void OknoStartowe::on_exitButton_clicked()
