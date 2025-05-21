@@ -21,6 +21,6 @@ add_library(UI STATIC
     ${UI_HEADERS}
     )
 
-target_link_libraries(UI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(UI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets WarstwaBiznesowa)
 target_include_directories(UI PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 

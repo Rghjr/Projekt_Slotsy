@@ -2,6 +2,7 @@
 #include "oknogra1.h"
 #include "oknogra2.h"
 #include "ui_oknostartowe.h"
+#include "gra1mechaniki.h"
 #include <QProcess>
 #include <QFile>
 #include <QMessageBox>
@@ -30,25 +31,16 @@ OknoStartowe::~OknoStartowe()
 
 void OknoStartowe::on_firstGameButton_clicked()
 {
-    close(); //Zamknięcie okna
+    hide(); // Ukrywamy okno
 
     int rows = 5, cols = 6;
-    int **tablica = new int *[rows];
-    for (int i = 0; i < rows; ++i) {
-        tablica[i] = new int[cols];
-    }
+    QVector<QVector<int>> tablica = Gra1Mechaniki::GenerujSymbole(rows, cols); // Generacja symboli
 
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
-            tablica[i][j] = rand() % 7; // Możesz to zostawić jak było, ale używasz już dynamicznych progów
-
-    OknoGra1 *gra = new OknoGra1(); // Tworzenia okna z grą
+    OknoGra1 *gra = new OknoGra1(); // Tworzymy nowe okno gry
+    gra->setAttribute(Qt::WA_DeleteOnClose); // Zapewniamy automatyczne usunięcie po zamknięciu
     gra->show();
     gra->UstawGrid(tablica, rows, cols);
 
-    for (int i = 0; i < rows; ++i)
-        delete[] tablica[i];
-    delete[] tablica;
 }
 
 void OknoStartowe::on_secondGameButton_clicked()

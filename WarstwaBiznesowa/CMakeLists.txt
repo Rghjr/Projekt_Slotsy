@@ -13,10 +13,12 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
 add_library(WarstwaBiznesowa SHARED
   WarstwaBiznesowa_global.h
-  warstwabiznesowa.cpp
-  warstwabiznesowa.h
+  gra1mechaniki.cpp gra1mechaniki.h
+  gra2mechaniki.h gra2mechaniki.cpp
 )
 
 target_link_libraries(WarstwaBiznesowa PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 
 target_compile_definitions(WarstwaBiznesowa PRIVATE WARSTWABIZNESOWA_LIBRARY)
+
+target_include_directories(WarstwaBiznesowa PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -1,5 +1,6 @@
 #include "oknogra1.h"
 #include "ui_oknogra1.h"
+#include "gra1mechaniki.h"
 #include <QFont>
 #include <QThread>
 #include <QPropertyAnimation>
@@ -10,6 +11,7 @@
 OknoGra1::OknoGra1(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::OknoGra1)
+    , mechanika(new Gra1Mechaniki)
 {
     ui->setupUi(this);
 
@@ -64,7 +66,7 @@ OknoGra1::~OknoGra1()
 
 
 
-void OknoGra1::UstawGrid(int **tablica, int rows, int cols)
+void OknoGra1::UstawGrid(QVector<QVector<int>> tablica, int rows, int cols)
 {
     QStringList owoce = {"🍎", "🍌", "🍇", "🍒", "🍍", "🥝", "🎁"};
 
@@ -92,34 +94,6 @@ void OknoGra1::UstawGrid(int **tablica, int rows, int cols)
     }
 }
 
-
-
-int OknoGra1::PrzypiszOwocek()
-{
-    // Zbieramy wartości prawdopodobieństw przed losowaniem
-    WczytajPrawdopodobienstwa();
-
-    // Losujemy liczbę z zakresu sumy prawdopodobieństw
-    int a = rand() % sumaProporcji;
-
-    // Przypisujemy owoc na podstawie wprowadzonych prawdopodobieństw
-    if (a < p_japko)
-        return 0; // Japko
-    if (a < p_japko + p_banan)
-        return 1; // Banan
-    if (a < p_japko + p_banan + p_winogrono)
-        return 2; // Winogrono
-    if (a < p_japko + p_banan + p_winogrono + p_wisnia)
-        return 3; // Wiśnia
-    if (a < p_japko + p_banan + p_winogrono + p_wisnia + p_ananas)
-        return 4; // Ananas
-    if (a < p_japko + p_banan + p_winogrono + p_wisnia + p_ananas + p_kiwi)
-        return 5; // Kiwi
-    return 6;     // Bonus (domyślnie)
-}
-
-
-
 void OknoGra1::AktualizujSaldo()
 {
     ui->saldoLabel->setText(QString("Aktualne saldo: %1").arg(saldo));
@@ -128,176 +102,96 @@ void OknoGra1::AktualizujSaldo()
 bool bonus=false;
 
 
-void OknoGra1::SprawdzWygrana()
-{
-    QMap<QString, QPair<int, float>> wynikWygranej; // <symbol, <ilość trafień, suma wygranej>>
+void OknoGra1::SprawdzWygrana() {
+    // 📉 Odejmujemy stawkę od salda gracza
     saldo -= stawka;
     AktualizujSaldo();
-    float wygrana = 0;
-    int rows = gridLabels.size();
-    int cols = rows > 0 ? gridLabels[0].size() : 0;
 
-    int SumaWystapien[7] = {0}; // 🍎🍌🍇🍒🍍🥝🎁
-
-    // Zliczanie wystąpień symboli
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            QString tekst = gridLabels[i][j]->text();
-            if (tekst == "🍎") SumaWystapien[0]++;
-            if (tekst == "🍌") SumaWystapien[1]++;
-            if (tekst == "🍇") SumaWystapien[2]++;
-            if (tekst == "🍒") SumaWystapien[3]++;
-            if (tekst == "🍍") SumaWystapien[4]++;
-            if (tekst == "🥝") SumaWystapien[5]++;
-            if (tekst == "🎁") SumaWystapien[6]++;
+    QVector<QVector<QString>> siatkaTekstow; // konwersja Qlabel na QString
+    for (const auto& row : gridLabels) {
+        QVector<QString> teksty;
+        for (const auto& label : row) {
+            teksty.append(label->text()); // Pobieramy tekst z QLabel
         }
+        siatkaTekstow.append(teksty);
     }
 
-    // Sprawdzanie i zapis wygranych
-    auto dodajWygrana = [&](QString symbol, int liczba, float wartosc) {
-        float nagroda = wartosc * stawka;
-        wygrana += nagroda;
-        wynikWygranej[symbol] = qMakePair(liczba, nagroda);
-    };
+    // 🔄 Pobieramy wynik wygranej z mechaniki gry
+    QMap<QString, QPair<int, float>> wynikWygranej = mechanika->SprawdzWygranaMechanika(siatkaTekstow, stawka);
+    float wygrana = 0;
 
-    if (SumaWystapien[0] >= l_japko)
-        dodajWygrana("🍎", SumaWystapien[0], w_japko);
-    if (SumaWystapien[1] >= l_banan)
-        dodajWygrana("🍌", SumaWystapien[1], w_banan);
-    if (SumaWystapien[2] >= l_winogrono)
-        dodajWygrana("🍇", SumaWystapien[2], w_winogrono);
-    if (SumaWystapien[3] >= l_wisnia)
-        dodajWygrana("🍒", SumaWystapien[3], w_wisnia);
-    if (SumaWystapien[4] >= l_ananas)
-        dodajWygrana("🍍", SumaWystapien[4], w_ananas);
-    if (SumaWystapien[5] >= l_kiwi)
-        dodajWygrana("🥝", SumaWystapien[5], w_kiwi);
+    // 📊 Sumujemy całkowitą wartość wygranej
+    for (const auto& wartosc : wynikWygranej.values()) {
+        wygrana += wartosc.second;
+    }
 
+    // 🎁 Sprawdzamy, czy gracz zdobył bonus
     QString bonusInfo;
-    if (SumaWystapien[6] >= l_bonus)
+    if (wynikWygranej.contains("🎁")) {
         bonusInfo = "🎁 BONUS 🎁\n";
+        Bonus();
+    }
 
-    // Główna część informacji o wygranej
+    // 🏆 Aktualizacja UI na podstawie wyniku gry
     if (wygrana > 0) {
         saldo += wygrana;
-        if (saldo < 0) saldo = 0;
         AktualizujSaldo();
 
+        // 📜 Tworzymy szczegóły wygranej
         QString szczegolyWygranej;
         for (auto it = wynikWygranej.begin(); it != wynikWygranej.end(); ++it) {
-            szczegolyWygranej += QString("%1x %2 : %3\n")
-            .arg(it.value().first)
-                .arg(it.key())
-                .arg(it.value().second);
+            szczegolyWygranej += QString("%1x %2 : %3\n").arg(it.value().first).arg(it.key()).arg(it.value().second);
         }
 
         ui->infoLabel->setText(bonusInfo + QString("Wygrana: %1\n%2").arg(wygrana).arg(szczegolyWygranej));
     } else {
         ui->infoLabel->setText(bonusInfo + "Brak wygranej");
     }
-
-    if (SumaWystapien[6] >= l_bonus) Bonus();
 }
 
 
-void OknoGra1::Bonus()
-{
-    bonus = true;
-    bool czywygrane = true;
-    bool zmianawygranej = false;
-    int freespiny = l_freespin;
-    float sumaWygranychLacznie = 0;
-    QMap<QString, QPair<int, float>> wynikWygranej; // <owoc, <ile razy wygrane, suma wygranej>>
 
-    while (freespiny > 0)
-    {
-        ui->liczbaFreeSpinow->setText(QString("FreeSpiny: %1").arg(freespiny));
-        freespiny--;
-        LosujOdNowa();
-        int sumabonusów = 0;
+void OknoGra1::Bonus() {
+    bonus = true; // Aktywujemy tryb bonusowy
+    int l_freespin = mechanika->PobierzLiczbeFreeSpinow();
+    int l_dodatkowychFreeSpinow = mechanika->PobierzLiczbeDodatkowychFreeSpinow();
 
-        do
-        {
-            sumabonusów = 0;
-            czywygrane = false;
-            float wygrana = 0;
-            int rows = gridLabels.size();
-            int cols = rows > 0 ? gridLabels[0].size() : 0;
-
-            int SumaWystapien[7] = {0};
-
-            // Zliczanie wystąpień symboli
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    QString tekst = gridLabels[i][j]->text();
-                    if (tekst == "🍎") SumaWystapien[0]++;
-                    if (tekst == "🍌") SumaWystapien[1]++;
-                    if (tekst == "🍇") SumaWystapien[2]++;
-                    if (tekst == "🍒") SumaWystapien[3]++;
-                    if (tekst == "🍍") SumaWystapien[4]++;
-                    if (tekst == "🥝") SumaWystapien[5]++;
-                    if (tekst == "🎁") sumabonusów++;
-                }
-            }
-
-            // Sprawdzamy wygrane i zapisujemy wynik
-            auto dodajWygrana = [&](QString symbol, int liczba, float wartosc) {
-                float nagroda = wartosc * stawka;
-                wygrana += nagroda;
-                if (!wynikWygranej.contains(symbol))
-                    wynikWygranej[symbol] = qMakePair(1, nagroda);
-                else {
-                    wynikWygranej[symbol].first += 1;
-                    wynikWygranej[symbol].second += nagroda;
-                }
-                UsunPolaczoneOwoce(symbol);
-                czywygrane = true;
-            };
-
-            if (SumaWystapien[0] >= l_japko) dodajWygrana("🍎", SumaWystapien[0], w_japko);
-            if (SumaWystapien[1] >= l_banan) dodajWygrana("🍌", SumaWystapien[1], w_banan);
-            if (SumaWystapien[2] >= l_winogrono) dodajWygrana("🍇", SumaWystapien[2], w_winogrono);
-            if (SumaWystapien[3] >= l_wisnia) dodajWygrana("🍒", SumaWystapien[3], w_wisnia);
-            if (SumaWystapien[4] >= l_ananas) dodajWygrana("🍍", SumaWystapien[4], w_ananas);
-            if (SumaWystapien[5] >= l_kiwi) dodajWygrana("🥝", SumaWystapien[5], w_kiwi);
-
-            // Jeśli coś wygrało – aktualizacja UI
-            if (czywygrane)
-            {
-                sumaWygranychLacznie += wygrana;
-                zmianawygranej = true;
-
-                QString szczegolyWygranej;
-                for (auto it = wynikWygranej.begin(); it != wynikWygranej.end(); ++it) {
-                    szczegolyWygranej += QString("%1x %2 : %3\n")
-                    .arg(it.value().first)
-                        .arg(it.key())
-                        .arg(it.value().second);
-                }
-
-                float sumaWygranych = 0;
-                for (auto it = wynikWygranej.begin(); it != wynikWygranej.end(); ++it) {
-                    sumaWygranych += it.value().second;
-                }
-
-                ui->infoLabel->setText(QString("Wygrana: %1\n%2").arg(sumaWygranych).arg(szczegolyWygranej));
-                QCoreApplication::processEvents(); // <- pozwól GUI się zaktualizować
-                QThread::sleep(1); // <- i dopiero teraz śpimy
-            }
-            else
-            {
-                if (zmianawygranej == false) ui->infoLabel->setText("Brak wygranej");
-            }
-
-        } while (czywygrane);
-
-        if (sumabonusów>=l_bonus) freespiny += l_dodatkowychFreeSpinow;
+    QVector<QVector<QString>> siatkaTekstow; // konwersja Qlabel na QString
+    for (const auto& row : gridLabels) {
+        QVector<QString> teksty;
+        for (const auto& label : row) {
+            teksty.append(label->text()); // Pobieramy tekst z QLabel
+        }
+        siatkaTekstow.append(teksty);
     }
 
-    saldo += sumaWygranychLacznie;
-    AktualizujSaldo();
-    bonus = false;
+    ui->liczbaFreeSpinow->setText(QString("FreeSpiny: %1").arg(l_freespin)); // Aktualizacja UI dla free spinów
+
+    // Wywołujemy mechanikę gry, aby sprawdzić bonusowe spiny
+    QMap<QString, QPair<int, float>> wynikWygranej = mechanika->BonusMechanika(siatkaTekstow, l_freespin, l_dodatkowychFreeSpinow, stawka);
+
+    // Pobieramy całkowitą wartość wygranej z mechaniki gry
+    float sumaWygranychLacznie = wynikWygranej["TOTAL"].second;
+
+    // Jeśli gracz wygrał, aktualizujemy saldo i interfejs
+    if (sumaWygranychLacznie > 0) {
+        saldo += sumaWygranychLacznie;
+        AktualizujSaldo(); // Aktualizacja widżetu salda
+
+        // Tworzymy szczegóły wygranej dla UI
+        QString szczegolyWygranej;
+        for (auto it = wynikWygranej.begin(); it != wynikWygranej.end(); ++it) {
+            if (it.key() != "TOTAL") szczegolyWygranej += QString("%1x %2 : %3\n").arg(it.value().first).arg(it.key()).arg(it.value().second);
+        }
+
+        ui->infoLabel->setText(QString("Wygrana: %1\n%2").arg(sumaWygranychLacznie).arg(szczegolyWygranej)); // Wyświetlenie wyniku
+    } else {
+        ui->infoLabel->setText("Brak wygranej"); // Jeśli nie było wygranej, informujemy gracza
+    }
+
+    bonus = false; // Wyłączamy tryb bonusowy po zakończeniu
 }
+
 
 
 
@@ -319,7 +213,7 @@ void OknoGra1::LosujOdNowa()
     int j = 0;
 
     while (j < cols) {
-        int owoc = PrzypiszOwocek();
+        int owoc = mechanika->PrzypiszOwocek();
         QLabel *label = gridLabels[i][j];
         QString nowyTekst = owoce[owoc];
 
@@ -385,7 +279,7 @@ void OknoGra1::UsunPolaczoneOwoce(QString a)
         for (int j = 0; j < cols; ++j) {
             QLabel* label = gridLabels[i][j];
             if (label->text() == a) {
-                int x = PrzypiszOwocek();
+                int x = mechanika->PrzypiszOwocek();
                 if (x >= 0 && x < owoce.size()) {
                     label->setText(owoce[x]);
                 }
@@ -399,98 +293,43 @@ void OknoGra1::UsunPolaczoneOwoce(QString a)
 void OknoGra1::WczytajPrawdopodobienstwa()
 {
     // Pobieramy wartości od użytkownika, jeśli pole nie jest puste
-    p_japko = ui->JapkoEdit->text().isEmpty() ? 30 : ui->JapkoEdit->text().toInt();
-    p_banan = ui->BananEdit->text().isEmpty() ? 20 : ui->BananEdit->text().toInt();
-    p_winogrono = ui->WinogronkoEdit->text().isEmpty() ? 15 : ui->WinogronkoEdit->text().toInt();
-    p_wisnia = ui->WisniaEdit->text().isEmpty() ? 13 : ui->WisniaEdit->text().toInt();
-    p_ananas = ui->AnanasEdit->text().isEmpty() ? 10 : ui->AnanasEdit->text().toInt();
-    p_kiwi = ui->KiwiEdit->text().isEmpty() ? 8 : ui->KiwiEdit->text().toInt();
-    p_bonus = ui->BonusEdit->text().isEmpty() ? 4 : ui->BonusEdit->text().toInt();
+    int japko = ui->JapkoEdit->text().isEmpty() ? 30 : ui->JapkoEdit->text().toInt();
+    int banan = ui->BananEdit->text().isEmpty() ? 20 : ui->BananEdit->text().toInt();
+    int winogrono = ui->WinogronkoEdit->text().isEmpty() ? 15 : ui->WinogronkoEdit->text().toInt();
+    int wisnia = ui->WisniaEdit->text().isEmpty() ? 13 : ui->WisniaEdit->text().toInt();
+    int ananas = ui->AnanasEdit->text().isEmpty() ? 10 : ui->AnanasEdit->text().toInt();
+    int kiwi = ui->KiwiEdit->text().isEmpty() ? 8 : ui->KiwiEdit->text().toInt();
+    int bonus = ui->BonusEdit->text().isEmpty() ? 4 : ui->BonusEdit->text().toInt();
 
-    // Ustawiamy na 0 wszystko co ujemne
-    if (p_japko < 0)
-        p_japko = 0;
-    if (p_banan < 0)
-        p_banan = 0;
-    if (p_winogrono < 0)
-        p_winogrono = 0;
-    if (p_wisnia < 0)
-        p_wisnia = 0;
-    if (p_ananas < 0)
-        p_ananas = 0;
-    if (p_kiwi < 0)
-        p_kiwi = 0;
-    if (p_bonus < 0)
-        p_bonus = 0;
+    // Pobieramy liczbę darmowych spinów
+    int freeSpiny = ui->liczbaFreeSpinowLineEdit->text().isEmpty() ? 10 : ui->liczbaFreeSpinowLineEdit->text().toInt();
+    int dodatkoweSpiny = ui->liczbaDodatkowychSpinowLineEdit->text().isEmpty() ? 1 : ui->liczbaDodatkowychSpinowLineEdit->text().toInt();
 
-    // Jeśli wszystkie są zerowe, to ustawiamy bezpiecznie na 1
-    if (p_japko == 0 && p_banan == 0 && p_winogrono == 0 && p_wisnia == 0 && p_ananas == 0
-        && p_kiwi == 0 && p_bonus == 0) {
-        p_japko = 1;
-        p_banan = 1;
-        p_winogrono = 1;
-        p_wisnia = 1;
-        p_ananas = 1;
-        p_kiwi = 1;
-        p_bonus = 1;
-    }
+    // Pobieramy minimalne liczby symboli do wygranej
+    int lJapko = ui->liczbaSymboliLineEdit_Japko->text().isEmpty() ? 8 : ui->liczbaSymboliLineEdit_Japko->text().toInt();
+    int lBanan = ui->liczbaSymboliLineEdit_Banan->text().isEmpty() ? 8 : ui->liczbaSymboliLineEdit_Banan->text().toInt();
+    int lWinogrono = ui->liczbaSymboliLineEdit_Winogronko->text().isEmpty() ? 8 : ui->liczbaSymboliLineEdit_Winogronko->text().toInt();
+    int lWisnia = ui->liczbaSymboliLineEdit_Wisnia->text().isEmpty() ? 8 : ui->liczbaSymboliLineEdit_Wisnia->text().toInt();
+    int lAnanas = ui->liczbaSymboliLineEdit_Ananas->text().isEmpty() ? 8 : ui->liczbaSymboliLineEdit_Ananas->text().toInt();
+    int lKiwi = ui->liczbaSymboliLineEdit_Kiwi->text().isEmpty() ? 8 : ui->liczbaSymboliLineEdit_Kiwi->text().toInt();
+    int lBonus = ui->liczbaSymboliLineEdit_Bonus->text().isEmpty() ? 4 : ui->liczbaSymboliLineEdit_Bonus->text().toInt();
+
+    // Pobieramy wartości wygranej
+    float wJapko = ui->kwotaWygranejLineEdit_Japko->text().isEmpty() ? 0.75 : ui->kwotaWygranejLineEdit_Japko->text().toFloat();
+    float wBanan = ui->kwotaWygranejLineEdit_Banan->text().isEmpty() ? 1.25 : ui->kwotaWygranejLineEdit_Banan->text().toFloat();
+    float wWinogrono = ui->kwotaWygranejLineEdit_Winogronko->text().isEmpty() ? 2.0 : ui->kwotaWygranejLineEdit_Winogronko->text().toFloat();
+    float wWisnia = ui->kwotaWygranejLineEdit_Wisnia->text().isEmpty() ? 3.0 : ui->kwotaWygranejLineEdit_Wisnia->text().toFloat();
+    float wAnanas = ui->kwotaWygranejLineEdit_Ananas->text().isEmpty() ? 5.0 : ui->kwotaWygranejLineEdit_Ananas->text().toFloat();
+    float wKiwi = ui->kwotaWygranejLineEdit_Kiwi->text().isEmpty() ? 8.0 : ui->kwotaWygranejLineEdit_Kiwi->text().toFloat();
+
+    // Przekazujemy wartości do mechaniki gry
+    mechanika->UstawPrawdopodobienstwa(japko, banan, winogrono, wisnia, ananas, kiwi, bonus,
+                                       lJapko, lBanan, lWinogrono, lWisnia, lAnanas, lKiwi, lBonus,
+                                       wJapko, wBanan, wWinogrono, wWisnia, wAnanas, wKiwi,
+                                       freeSpiny, dodatkoweSpiny);
 
     // Obliczamy sumę proporcji
-    sumaProporcji = p_japko + p_banan + p_winogrono + p_wisnia + p_ananas + p_kiwi + p_bonus;
-
-    // Ustawiamy te wartości z powrotem do QLineEdit, żeby było widać co naprawdę siedzi
-    ui->JapkoEdit->setText(QString::number(p_japko));
-    ui->BananEdit->setText(QString::number(p_banan));
-    ui->WinogronkoEdit->setText(QString::number(p_winogrono));
-    ui->WisniaEdit->setText(QString::number(p_wisnia));
-    ui->AnanasEdit->setText(QString::number(p_ananas));
-    ui->KiwiEdit->setText(QString::number(p_kiwi));
-    ui->BonusEdit->setText(QString::number(p_bonus));
-
-    l_japko = ui->liczbaSymboliLineEdit_Japko->text().isEmpty()
-                  ? 8
-                  : ui->liczbaSymboliLineEdit_Japko->text().toInt();
-    l_banan = ui->liczbaSymboliLineEdit_Banan->text().isEmpty()
-                  ? 8
-                  : ui->liczbaSymboliLineEdit_Banan->text().toInt();
-    l_winogrono = ui->liczbaSymboliLineEdit_Winogronko->text().isEmpty()
-                      ? 8
-                      : ui->liczbaSymboliLineEdit_Winogronko->text().toInt();
-    l_wisnia = ui->liczbaSymboliLineEdit_Wisnia->text().isEmpty()
-                   ? 8
-                   : ui->liczbaSymboliLineEdit_Wisnia->text().toInt();
-    l_ananas = ui->liczbaSymboliLineEdit_Ananas->text().isEmpty()
-                   ? 8
-                   : ui->liczbaSymboliLineEdit_Ananas->text().toInt();
-    l_kiwi = ui->liczbaSymboliLineEdit_Kiwi->text().isEmpty()
-                 ? 8
-                 : ui->liczbaSymboliLineEdit_Kiwi->text().toInt();
-    l_bonus = ui->liczbaSymboliLineEdit_Bonus->text().isEmpty()
-                  ? 4
-                  : ui->liczbaSymboliLineEdit_Bonus->text().toInt();
-
-    w_japko = ui->kwotaWygranejLineEdit_Japko->text().isEmpty()
-                  ? 0.75
-                  : ui->kwotaWygranejLineEdit_Japko->text().toFloat();
-    w_banan = ui->kwotaWygranejLineEdit_Banan->text().isEmpty()
-                  ? 1.25
-                  : ui->kwotaWygranejLineEdit_Banan->text().toFloat();
-    w_winogrono = ui->kwotaWygranejLineEdit_Winogronko->text().isEmpty()
-                      ? 2.0
-                      : ui->kwotaWygranejLineEdit_Winogronko->text().toFloat();
-    w_wisnia = ui->kwotaWygranejLineEdit_Wisnia->text().isEmpty()
-                   ? 3.0
-                   : ui->kwotaWygranejLineEdit_Wisnia->text().toFloat();
-    w_ananas = ui->kwotaWygranejLineEdit_Ananas->text().isEmpty()
-                   ? 5.0
-                   : ui->kwotaWygranejLineEdit_Ananas->text().toFloat();
-    w_kiwi = ui->kwotaWygranejLineEdit_Kiwi->text().isEmpty()
-                 ? 8.0
-                 : ui->kwotaWygranejLineEdit_Kiwi->text().toFloat();
-
-
-    l_freespin = ui->liczbaFreeSpinowLineEdit->text().isEmpty() ? 10 : ui->liczbaFreeSpinowLineEdit->text().toInt();
-    l_dodatkowychFreeSpinow = ui->liczbaDodatkowychSpinowLineEdit->text().isEmpty() ? 1 : ui->liczbaDodatkowychSpinowLineEdit->text().toInt();
+    sumaProporcji = mechanika->PobierzSumaProporcji();
 }
 
 
