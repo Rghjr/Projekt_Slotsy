@@ -6,11 +6,16 @@
 #include <QGraphicsOpacityEffect>
 #include <QTimer>
 
-OknoGra2::OknoGra2(QWidget *parent)
+OknoGra2::OknoGra2(OknoStartowe* startoweOkno, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::OknoGra2)
+    , oknoStartowe(startoweOkno)
 {
     ui->setupUi(this);
+
+    connect(ui->powrotButton, &QPushButton::clicked, this, &OknoGra2::on_returnButton_select);
+
+
     connect(ui->SPINPRZYCISK, &QPushButton::clicked, this, &OknoGra2::LosujOdNowa);
 
     ui->l_1_check->setChecked(true);
@@ -21,6 +26,14 @@ OknoGra2::OknoGra2(QWidget *parent)
 
     ui->AUTOSPINPRZYCISK->setCheckable(true);
     connect(ui->AUTOSPINPRZYCISK, &QPushButton::toggled, this, &OknoGra2::Autospin);
+
+    ui->stawkaComboBox->setCurrentIndex(6); // bo indeksy startują od 0
+    connect(ui->stawkaComboBox, &QComboBox::currentTextChanged, this, &OknoGra2::zmienStawke);
+
+    saldo = oknoStartowe->pobierzSaldo();
+
+    bonus = false;
+    spiny_bonus = 0;
 }
 
 OknoGra2::~OknoGra2()
@@ -79,7 +92,6 @@ int OknoGra2::PrzypiszOwocek()
 
 }
 
-
 void OknoGra2::LosujOdNowa()
 {
     if (saldo < stawka) {
@@ -127,7 +139,10 @@ void OknoGra2::LosujOdNowa()
     }
 
     ui->SPINPRZYCISK->setEnabled(true);
-    SprawdzWygrana();
+    if (bonus) SprawdzWygranaBonus();
+    else SprawdzWygrana();
+
+    ui->Freespiny_Label->setText(QString("FreeSpiny: %1").arg(spiny_bonus));
 }
 
 void OknoGra2::Autospin(bool checked)
@@ -149,8 +164,6 @@ void OknoGra2::Autospin(bool checked)
     }
 }
 
-
-
 void OknoGra2::WczytajPrawdopodobienstwa()
 {
     // Pobieramy wartości od użytkownika, jeśli pole nie jest puste
@@ -159,6 +172,12 @@ void OknoGra2::WczytajPrawdopodobienstwa()
     p_winogrono = ui->WinogronkoEdit->text().isEmpty() ? 20 : ui->WinogronkoEdit->text().toInt();
     p_wisnia = ui->WisniaEdit->text().isEmpty() ? 15 : ui->WisniaEdit->text().toInt();
     p_bonus = ui->BonusEdit->text().isEmpty() ? 10 : ui->BonusEdit->text().toInt();
+
+    l_freespin = ui->LiczbaFreeSpinowLineEdit->text().isEmpty() ? 5 : ui->LiczbaFreeSpinowLineEdit->text().toInt();
+    l_dodatkowychFreeSpinow = ui->LiczbaDodatkowychFreeSpinowLineEdit->text().isEmpty() ? 1 : ui->LiczbaDodatkowychFreeSpinowLineEdit->text().toInt();
+
+    ui->LiczbaFreeSpinowLineEdit->setText(QString::number(l_freespin));
+    ui->LiczbaDodatkowychFreeSpinowLineEdit->setText(QString::number(l_dodatkowychFreeSpinow));
 
     // Ustawiamy na 0 wszystko co ujemne
     if (p_japko < 0)
@@ -193,24 +212,20 @@ void OknoGra2::WczytajPrawdopodobienstwa()
 
 
 
-    w_japko = ui->kwotaWygranejLineEdit_Japko->text().isEmpty()
-                  ? 0.75
-                  : ui->kwotaWygranejLineEdit_Japko->text().toFloat();
-    w_banan = ui->kwotaWygranejLineEdit_Banan_->text().isEmpty()
-                  ? 1.25
-                  : ui->kwotaWygranejLineEdit_Banan_->text().toFloat();
-    w_winogrono = ui->kwotaWygranejLineEdit_Winogronko_->text().isEmpty()
-                      ? 2.0
-                      : ui->kwotaWygranejLineEdit_Winogronko_->text().toFloat();
-    w_wisnia = ui->kwotaWygranejLineEdit_Wisnia->text().isEmpty()
-                   ? 3.0
-                   : ui->kwotaWygranejLineEdit_Wisnia->text().toFloat();
-    w_bonus = ui->kwotaWygranejLineEdit_Bonus->text().isEmpty()
-                   ? 5.0
-                   : ui->kwotaWygranejLineEdit_Bonus->text().toFloat();
-    mn_bonus = ui->mnoznikBonusuLineEdit->text().isEmpty()
-                   ? 10.0
-                   : ui->mnoznikBonusuLineEdit->text().toFloat();
+    
+    QString s;
+    s = ui->kwotaWygranejLineEdit_Japko->text().replace(",", ".");
+    w_japko = s.isEmpty() ? 0.75 : s.toFloat();
+    s = ui->kwotaWygranejLineEdit_Banan_->text().replace(",", ".");
+    w_banan = s.isEmpty() ? 1.25 : s.toFloat();
+    s = ui->kwotaWygranejLineEdit_Winogronko_->text().replace(",", ".");
+    w_winogrono = s.isEmpty() ? 2.0 : s.toFloat();
+    s = ui->kwotaWygranejLineEdit_Wisnia->text().replace(",", ".");
+    w_wisnia = s.isEmpty() ? 3.0 : s.toFloat();
+    s = ui->kwotaWygranejLineEdit_Bonus->text().replace(",", ".");
+    w_bonus = s.isEmpty() ? 5.0 : s.toFloat();
+    s = ui->mnoznikBonusuLineEdit->text().replace(",", ".");
+    mn_bonus = s.isEmpty() ? 10.0 : s.toFloat();
 
 
 
@@ -302,50 +317,144 @@ void OknoGra2::SprawdzWygrana()
     if (l16 && a00 == a11 && a11 == a12) { wygrana += Winek(16); anyWin = true; if (a00 == "🎁") bonusCount++; }
     if (l17 && a10 == a11 && a11 == a02) { wygrana += Winek(17); anyWin = true; if (a10 == "🎁") bonusCount++; }
 
+    saldo += wygrana;
+    AktualizujSaldo();
+
+    if ( bonusCount != 0 )
+    {
+        bonus = true;
+        spiny_bonus = l_freespin + (bonusCount-1) * l_dodatkowychFreeSpinow;
+        ui->WygraneLabel->setText("BONUS");
+        QString wynikTekst = QString("Łączna wygrana: %1\n").arg(wygrana);
+        ui->LacznaWygrana_Label->setText(wynikTekst);
+    }
+    else
+    {
+        QString wynikTekst = QString("Łączna wygrana: %1\n").arg(wygrana);
+        ui->LacznaWygrana_Label->setText(wynikTekst);
+    }
+}
+
+void OknoGra2::SprawdzWygranaBonus()
+{
+    WczytajPrawdopodobienstwa();
+
+    ui->WygraneLabel->clear();
+    ui->WygraneLabel->setText("BONUS");  // Dodano nagłówek
+
+    float wygrana = 0;
+    bool anyWin = false;
+
+    QString a00 = gridLabels[0][0]->text();
+    QString a01 = gridLabels[0][1]->text();
+    QString a02 = gridLabels[0][2]->text();
+
+    QString a10 = gridLabels[1][0]->text();
+    QString a11 = gridLabels[1][1]->text();
+    QString a12 = gridLabels[1][2]->text();
+
+    QString a20 = gridLabels[2][0]->text();
+    QString a21 = gridLabels[2][1]->text();
+    QString a22 = gridLabels[2][2]->text();
+
+    auto liniaWygrana = [](QString x, QString y, QString z) -> bool {
+        if (x == "🎁") x = (y != "🎁") ? y : z;
+        if (y == "🎁") y = (x != "🎁") ? x : z;
+        if (z == "🎁") z = (x != "🎁") ? x : y;
+        return (x == y && y == z);
+    };
+
+    if (l1 && liniaWygrana(a00, a01, a02)) { wygrana += Winek(1); anyWin = true; }
+    if (l2 && liniaWygrana(a10, a11, a12)) { wygrana += Winek(2); anyWin = true; }
+    if (l3 && liniaWygrana(a20, a21, a22)) { wygrana += Winek(3); anyWin = true; }
+
+    if (l4 && liniaWygrana(a00, a11, a22)) { wygrana += Winek(4); anyWin = true; }
+    if (l5 && liniaWygrana(a20, a11, a02)) { wygrana += Winek(5); anyWin = true; }
+
+    if (l6 && liniaWygrana(a20, a11, a22)) { wygrana += Winek(6); anyWin = true; }
+    if (l7 && liniaWygrana(a10, a01, a12)) { wygrana += Winek(7); anyWin = true; }
+
+    if (l8 && liniaWygrana(a00, a11, a02)) { wygrana += Winek(8); anyWin = true; }
+    if (l9 && liniaWygrana(a10, a21, a12)) { wygrana += Winek(9); anyWin = true; }
+
+    if (l10 && liniaWygrana(a20, a21, a12)) { wygrana += Winek(10); anyWin = true; }
+    if (l11 && liniaWygrana(a10, a11, a02)) { wygrana += Winek(11); anyWin = true; }
+
+    if (l12 && liniaWygrana(a00, a01, a12)) { wygrana += Winek(12); anyWin = true; }
+    if (l13 && liniaWygrana(a10, a11, a22)) { wygrana += Winek(13); anyWin = true; }
+
+    if (l14 && liniaWygrana(a10, a01, a02)) { wygrana += Winek(14); anyWin = true; }
+    if (l15 && liniaWygrana(a20, a11, a12)) { wygrana += Winek(15); anyWin = true; }
+
+    if (l16 && liniaWygrana(a00, a11, a12)) { wygrana += Winek(16); anyWin = true; }
+    if (l17 && liniaWygrana(a10, a11, a02)) { wygrana += Winek(17); anyWin = true; }
 
     QString wynikTekst = QString("Łączna wygrana: %1\n").arg(wygrana);
     ui->LacznaWygrana_Label->setText(wynikTekst);
 
+    spiny_bonus--;
+    if (spiny_bonus == 0) bonus = false;
     saldo += wygrana;
     AktualizujSaldo();
 }
 
 float OknoGra2::Winek(int x)
 {
-    // Wskaźnik na wiersz pierwszej kolumny, zależnie od linii
+    WczytajPrawdopodobienstwa();
+
     int row = 0;
     if (x == 1 || x == 4 || x == 8 || x == 12 || x == 16) row = 0;
     else if (x == 2 || x == 7 || x == 9 || x == 11 || x == 13 || x == 14 || x == 17) row = 1;
     else if (x == 3 || x == 5 || x == 6 || x == 10 || x == 15) row = 2;
-    else return 0; // Nieznana linia?
+    else return 0;
 
-    QString znak = gridLabels[row][0]->text();
+    QString z0 = gridLabels[row][0]->text();
+    QString z1 = gridLabels[row][1]->text();
+    QString z2 = gridLabels[row][2]->text();
 
-    // Mapka symbol → współczynnik
-    static const QMap<QString, float> wspMap {
+    // Jeśli pierwszy to 🎁, znajdź alternatywny symbol
+    QString znak;
+    if (z0 == "🎁") {
+        if (z1 != "🎁") znak = z1;
+        else if (z2 != "🎁") znak = z2;
+        else znak = "🎁"; // domyślny symbol, gdy wszystkie to 🎁
+    } else {
+        znak = z0;
+    }
+
+    QMap<QString, float> wspMap {
         {"🍎", w_japko},
         {"🍌", w_banan},
         {"🍇", w_winogrono},
         {"🍒", w_wisnia},
-        {"🎁", w_bonus}
+        {"🎁", w_bonus} // Technicznie nie powinien być używany
     };
 
     float wsp = wspMap.value(znak, 0.0f);
-
     float wygrana = stawka * wsp;
+    if (bonus) wygrana *= mn_bonus;
 
     QString currentText = ui->WygraneLabel->text();
     currentText += QString("\nLinia %1: %2 - wygrana: %3").arg(x).arg(znak).arg(wygrana);
-
     ui->WygraneLabel->setText(currentText);
 
     return wygrana;
 }
 
-
-
-
 void OknoGra2::AktualizujSaldo()
 {
-    ui->saldoLabel->setText(QString("Saldo: %1").arg(saldo));
+    oknoStartowe->ustawSaldo(saldo);
+    ui->saldoLabel->setText(QString("Saldo: %1").arg(QString::number(saldo, 'f', 2)));
+}
+
+void OknoGra2::zmienStawke(const QString &tekst)
+{
+    float nowaStawka = ui->stawkaComboBox->currentText().toFloat();
+    stawka = nowaStawka;
+}
+
+void OknoGra2::on_returnButton_select()
+{
+    this->close();
+    oknoStartowe->show();
 }
