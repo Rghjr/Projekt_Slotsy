@@ -19,6 +19,8 @@ add_library(UI STATIC
     oknogra1.cpp oknogra1.h
     oknogra2.cpp oknogra2.h
     ${UI_HEADERS}
+    wygrane.h wygrane.cpp
+
     )
 
 target_link_libraries(UI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets WarstwaBiznesowa)
