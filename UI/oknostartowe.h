@@ -13,9 +13,19 @@ class OknoStartowe : public QMainWindow
 {
     Q_OBJECT
 
+
 public:
+    float saldo = 100;
+
+    void ustawSaldo(float nowe) { saldo = nowe; }
+    float pobierzSaldo() const { return saldo; }
+
     OknoStartowe(QWidget *parent = nullptr);
     ~OknoStartowe();
+    void EdytujSaldoPlus();
+    void EdytujSaldoMinus();
+
+
 
 private slots:
 

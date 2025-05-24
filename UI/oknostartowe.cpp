@@ -22,6 +22,9 @@ OknoStartowe::OknoStartowe(QWidget *parent)
     ui->logoLabel->setPixmap(logo); // Użycie istniejącego QLabel
     ui->logoLabel->setScaledContents(false); // Dopasowanie do rozmiaru
     ui->logoLabel->setAlignment(Qt::AlignCenter); // Wyśrodkowanie
+    ui->SaldoLabel->setText(QString("Saldo: %1").arg(saldo));
+    connect(ui->plusButton, &QPushButton::clicked, this, &OknoStartowe::EdytujSaldoPlus);
+    connect(ui->minusButton, &QPushButton::clicked, this, &OknoStartowe::EdytujSaldoMinus);
 }
 
 OknoStartowe::~OknoStartowe()
@@ -45,7 +48,7 @@ void OknoStartowe::on_firstGameButton_clicked()
 
 void OknoStartowe::on_secondGameButton_clicked()
 {
-    close();
+    hide();
 
     int rows = 3, cols = 3;
     int **tablica = new int *[rows];
@@ -57,7 +60,7 @@ void OknoStartowe::on_secondGameButton_clicked()
         for (int j = 0; j < cols; ++j)
             tablica[i][j] = rand() % 7;
 
-    OknoGra2 *gra = new OknoGra2(); // Tworzenia okna z grą
+    OknoGra2 *gra = new OknoGra2(this, nullptr);        // Tworzenia okna z grą
     gra->show();
     gra->UstawGrid(tablica, rows, cols);
 
@@ -71,9 +74,34 @@ void OknoStartowe::on_exitButton_clicked()
     close(); //Zamknięcie okna
 }
 
+void OknoStartowe::EdytujSaldoPlus()
+{
+    bool ok;
+    float amount = ui->amountQLineEdit->text().toFloat(&ok);
+    if (!ok) {
+        QMessageBox::warning(this, "Błąd", "Podaj poprawną liczbę!");
+        return;
+    }
+    saldo += amount;
+    ui->SaldoLabel->setText(QString("Saldo: %1").arg(saldo));
+}
 
+void OknoStartowe::EdytujSaldoMinus()
+{
+    bool ok;
+    float amount = ui->amountQLineEdit->text().toFloat(&ok);
+    if (!ok) {
+        QMessageBox::warning(this, "Błąd", "Podaj poprawną liczbę!");
+        return;
+    }
+    saldo -= amount;
+    if (saldo < 0)
+    {
+        saldo = 0;
+        QMessageBox::warning(this, "Błąd", "Nie można zejść poniżej zera!");
+    }
 
-
-
+    ui->SaldoLabel->setText(QString("Saldo: %1").arg(saldo));
+}
 
 
