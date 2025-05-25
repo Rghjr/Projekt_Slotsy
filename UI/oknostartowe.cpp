@@ -145,6 +145,15 @@ void OknoStartowe::WczytajSaldo()
 void OknoStartowe::WczytajDaneGra1()
 {
     QFile file("wygrane_1.txt");
+
+    if (!file.exists()) //sprawdzanie czy plik istnieje
+    {
+        if (file.open(QIODevice::WriteOnly)) {
+            QTextStream out(&file);
+            file.close();
+        }
+    }
+
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning("Nie można otworzyć pliku wygrane_1.txt");
         return;
@@ -166,6 +175,15 @@ void OknoStartowe::WczytajDaneGra1()
 void OknoStartowe::WczytajDaneGra2()
 {
     QFile file("wygrane_2.txt");
+
+    if (!file.exists()) //sprawdzanie czy plik istnieje
+    {
+        if (file.open(QIODevice::WriteOnly)) {
+            QTextStream out(&file);
+            file.close();
+        }
+    }
+
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning("Nie można otworzyć pliku wygrane_2.txt");
         return;

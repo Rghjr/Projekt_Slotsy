@@ -96,7 +96,7 @@ OknoGra2::~OknoGra2()
     delete ui;
 }
 
-void OknoGra2::UstawGrid(int **tablica, int rows, int cols)
+void OknoGra2::UstawGrid(int ** tablica, int rows, int cols)
 {
     QStringList owoce = {"🍎", "🍌", "🍇", "🍒", "🍍", "🥝", "🎁"};
 
@@ -565,6 +565,7 @@ float OknoGra2::Winek(int x)
 
     float wsp = wspMap.value(znak, 0.0f);
     float wygrana = stawka * wsp;
+
     if (bonus)
     {
         wygrana *= mn_bonus;
@@ -633,7 +634,7 @@ void OknoGra2::ZapisDoPliku()
         out << l1 << "\n" << l2 << "\n" << l3 << "\n" << l4 << "\n" << l5 << "\n" << l6 << "\n" << l7 << "\n" << l8 << "\n" << l9 << "\n" << l10 << "\n" << l11 << "\n" << l12 << "\n" << l13 << "\n" << l14 << "\n" << l15 << "\n" << l16 << "\n" << l17 << "\n";
 
         plik.close();
-        qDebug() << "Zapisano do pliku!";
+        qDebug() << "Zapisano do pliku!" << nazwa_pliku;
     } else {
         qDebug() << "Nie udało się otworzyć pliku do zapisu:" << plik.errorString();
     }
@@ -675,7 +676,7 @@ bool OknoGra2::WczytanieZPliku()
         l16 = linie[15]; l17 = linie[16];
 
         plik.close();
-        qDebug() << "Wczytano dane z pliku!";
+        qDebug() << "Wczytano dane z pliku!" << nazwa_pliku;
     }
     else
     {

@@ -1,7 +1,10 @@
 #ifndef GRA2MECHANIKI_H
 #define GRA2MECHANIKI_H
 
-class Gra2Mechaniki
+#include <Gra1Mechaniki.h>
+
+
+class Gra2Mechaniki : public Gra1Mechaniki
 {
 public:
     Gra2Mechaniki();

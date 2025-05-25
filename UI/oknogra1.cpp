@@ -664,7 +664,7 @@ void OknoGra1::ZapisDoPliku()
 
 
         plik.close();
-        qDebug() << "Zapisano do pliku!";
+        qDebug() << "Zapisano do pliku!" << nazwa_pliku;
     } else {
         qDebug() << "Nie udało się otworzyć pliku do zapisu:" << plik.errorString();
     }

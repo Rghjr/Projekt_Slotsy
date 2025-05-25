@@ -19,7 +19,7 @@ class OknoGra2 : public QMainWindow
 public:
     OknoGra2(OknoStartowe* startoweOkno, QWidget *parent);
     ~OknoGra2();
-    void UstawGrid(int **tablica, int rows, int cols);
+    void UstawGrid(int** tablica, int rows, int cols);
     int PrzypiszOwocek();
     void LosujOdNowa();
     void WczytajPrawdopodobienstwa();
