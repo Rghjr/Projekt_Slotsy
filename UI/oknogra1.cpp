@@ -5,22 +5,36 @@
 #include <QPropertyAnimation>
 #include <QGraphicsOpacityEffect>
 #include <QTimer>
+#include <QFile>
+#include <QTextStream>
+#include <QMessageBox>
+#include "wygrane.h"
 
 
-OknoGra1::OknoGra1(QWidget *parent)
+OknoGra1::OknoGra1(OknoStartowe* startoweOkno, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::OknoGra1)
+    , oknoStartowe(startoweOkno)
 {
     ui->setupUi(this);
 
-    // Ustawienie początkowych wartości w polach edycyjnych
-    ui->JapkoEdit->setText("30");
-    ui->BananEdit->setText("20");
-    ui->WinogronkoEdit->setText("15");
-    ui->WisniaEdit->setText("13");
-    ui->AnanasEdit->setText("10");
-    ui->KiwiEdit->setText("8");
-    ui->BonusEdit->setText("4");
+    connect(ui->powrotButton, &QPushButton::clicked, this, &OknoGra1::on_returnButton_select);
+
+    connect(ui->SPINPRZYCISK, &QPushButton::clicked, this, &OknoGra1::LosujOdNowa);
+
+    ui->AUTOSPINPRZYCISK->setCheckable(true);
+    connect(ui->AUTOSPINPRZYCISK, &QPushButton::toggled, this, &OknoGra1::Autospin);
+
+    ui->StawkaLabel->setText("Stawka: 5");
+    connect(ui->plusButton, &QPushButton::clicked, this, &OknoGra1::ZwiekszStawke);
+    connect(ui->minusButton, &QPushButton::clicked, this, &OknoGra1::ZmniejszStawke);
+
+    saldo = oknoStartowe->pobierzSaldo();
+    ui->saldoLabel->setText(QString("Saldo: %1").arg(QString::number(saldo, 'f', 2)));
+
+    bonus = false;
+    freespiny = 0;
+
 
     ui->liczbaSymboliLineEdit_Japko->setText("8");      // Tu ustawiłeś liczbę symboli dla jabłka
     ui->liczbaSymboliLineEdit_Banan->setText("8");      // Liczba symboli dla banana
@@ -42,17 +56,40 @@ OknoGra1::OknoGra1(QWidget *parent)
     ui->liczbaDodatkowychSpinowLineEdit->setText("1");
 
     // Ładowanie prawdopodobieństw (już z początkowymi wartościami)
+
+    if(WczytanieZPliku())
+    {
+        ui->JapkoEdit->setText(QString::number(p_japko));
+        ui->BananEdit->setText(QString::number(p_banan));
+        ui->WinogronkoEdit->setText(QString::number(p_winogrono));
+        ui->WisniaEdit->setText(QString::number(p_wisnia));
+        ui->AnanasEdit->setText(QString::number(p_ananas));
+        ui->KiwiEdit->setText(QString::number(p_kiwi));
+        ui->BonusEdit->setText(QString::number(p_bonus));
+
+
+        ui->liczbaSymboliLineEdit_Japko->setText(QString::number(l_japko));
+        ui->liczbaSymboliLineEdit_Banan->setText(QString::number(l_banan));
+        ui->liczbaSymboliLineEdit_Winogronko->setText(QString::number(l_winogrono));
+        ui->liczbaSymboliLineEdit_Wisnia->setText(QString::number(l_wisnia));
+        ui->liczbaSymboliLineEdit_Ananas->setText(QString::number(l_ananas));
+        ui->liczbaSymboliLineEdit_Kiwi->setText(QString::number(l_kiwi));
+        ui->liczbaSymboliLineEdit_Bonus->setText(QString::number(l_bonus));
+
+
+        ui->kwotaWygranejLineEdit_Japko->setText(QString::number(w_japko));
+        ui->kwotaWygranejLineEdit_Banan->setText(QString::number(w_banan));
+        ui->kwotaWygranejLineEdit_Winogronko->setText(QString::number(w_winogrono));
+        ui->kwotaWygranejLineEdit_Wisnia->setText(QString::number(w_wisnia));
+        ui->kwotaWygranejLineEdit_Ananas->setText(QString::number(w_ananas));
+        ui->kwotaWygranejLineEdit_Kiwi->setText(QString::number(w_kiwi));
+
+
+        ui->liczbaFreeSpinowLineEdit->setText(QString::number(l_freespin));
+        ui->liczbaDodatkowychSpinowLineEdit->setText(QString::number(l_dodatkowychFreeSpinow));
+    }
+
     WczytajPrawdopodobienstwa();
-
-    // Połączenie przycisku z funkcją
-    connect(ui->SPINPRZYCISK, &QPushButton::clicked, this, &OknoGra1::LosujOdNowa);
-
-    ui->AUTOSPINPRZYCISK->setCheckable(true);
-    connect(ui->AUTOSPINPRZYCISK, &QPushButton::toggled, this, &OknoGra1::Autospin);
-
-    ui->StawkaLabel->setText("Stawka: 5");
-    connect(ui->plusButton, &QPushButton::clicked, this, &OknoGra1::ZwiekszStawke);
-    connect(ui->minusButton, &QPushButton::clicked, this, &OknoGra1::ZmniejszStawke);
 }
 
 
@@ -61,8 +98,6 @@ OknoGra1::~OknoGra1()
 {
     delete ui;
 }
-
-
 
 void OknoGra1::UstawGrid(QVector<QVector<int>> tablica, int rows, int cols)
 {
@@ -92,8 +127,6 @@ void OknoGra1::UstawGrid(QVector<QVector<int>> tablica, int rows, int cols)
     }
 }
 
-
-
 int OknoGra1::PrzypiszOwocek()
 {
     // Zbieramy wartości prawdopodobieństw przed losowaniem
@@ -118,15 +151,11 @@ int OknoGra1::PrzypiszOwocek()
     return 6;     // Bonus (domyślnie)
 }
 
-
-
 void OknoGra1::AktualizujSaldo()
 {
-    ui->saldoLabel->setText(QString("Aktualne saldo: %1").arg(saldo));
+    oknoStartowe->ustawSaldo(saldo);
+    ui->saldoLabel->setText(QString("Saldo: %1").arg(QString::number(saldo, 'f', 2)));
 }
-
-bool bonus=false;
-
 
 void OknoGra1::SprawdzWygrana()
 {
@@ -181,36 +210,47 @@ void OknoGra1::SprawdzWygrana()
     if (wygrana > 0) {
         saldo += wygrana;
         if (saldo < 0) saldo = 0;
-        AktualizujSaldo();
+
+
 
         QString szczegolyWygranej;
+        Wygrane zapisywacz; // Tworzymy obiekt klasy Wygrane
         for (auto it = wynikWygranej.begin(); it != wynikWygranej.end(); ++it) {
+            // Budujemy string do UI
             szczegolyWygranej += QString("%1x %2 : %3\n")
-            .arg(it.value().first)
-                .arg(it.key())
-                .arg(it.value().second);
+                                     .arg(it.value().first)
+                                     .arg(it.key())
+                                     .arg(it.value().second);
+
+            // Korzystamy z metody zapisz (dopisuje linie do pliku)
+            zapisywacz.zapisz1(it.value().second, it.key(), it.value().first);
         }
+
+
+
 
         ui->infoLabel->setText(bonusInfo + QString("Wygrana: %1\n%2").arg(wygrana).arg(szczegolyWygranej));
     } else {
         ui->infoLabel->setText(bonusInfo + "Brak wygranej");
     }
 
+    AktualizujSaldo();
+
     if (SumaWystapien[6] >= l_bonus) Bonus();
 }
-
 
 void OknoGra1::Bonus()
 {
     bonus = true;
     bool czywygrane = true;
-    bool zmianawygranej = false;
-    int freespiny = l_freespin;
     float sumaWygranychLacznie = 0;
-    QMap<QString, QPair<int, float>> wynikWygranej; // <owoc, <ile razy wygrane, suma wygranej>>
+    WczytajPrawdopodobienstwa();
+    freespiny = l_freespin;
 
     while (freespiny > 0)
     {
+        QMap<QString, QPair<int, float>> wynikWygranej;
+        bool zmianawygranej = false;
         ui->liczbaFreeSpinow->setText(QString("FreeSpiny: %1").arg(freespiny));
         freespiny--;
         LosujOdNowa();
@@ -288,22 +328,24 @@ void OknoGra1::Bonus()
             {
                 if (zmianawygranej == false) ui->infoLabel->setText("Brak wygranej");
             }
-
         } while (czywygrane);
 
         if (sumabonusów>=l_bonus) freespiny += l_dodatkowychFreeSpinow;
+        ui->liczbaFreeSpinow->setText(QString("FreeSpiny: %1").arg(freespiny));
     }
 
     saldo += sumaWygranychLacznie;
+    Wygrane zapisywacz;
+    zapisywacz.zapisz1(sumaWygranychLacznie, "🎁", 0);
+
     AktualizujSaldo();
     bonus = false;
 }
 
-
-
 void OknoGra1::LosujOdNowa()
 {
     if (saldo < stawka) {
+        QMessageBox::warning(this, "Bieda", "Za małe saldo aby spinować");
         ui->maszyna->setEnabled(false);
         return;
     }
@@ -351,8 +393,6 @@ void OknoGra1::LosujOdNowa()
     ui->SPINPRZYCISK->setEnabled(true);
 }
 
-
-
 void OknoGra1::Autospin(bool checked)
 {
     if (checked)
@@ -372,9 +412,6 @@ void OknoGra1::Autospin(bool checked)
     }
 }
 
-
-
-
 void OknoGra1::UsunPolaczoneOwoce(QString a)
 {
     const QStringList owoce = {"🍎", "🍌", "🍇", "🍒", "🍍", "🥝", "🎁"};
@@ -393,8 +430,6 @@ void OknoGra1::UsunPolaczoneOwoce(QString a)
         }
     }
 }
-
-
 
 void OknoGra1::WczytajPrawdopodobienstwa()
 {
@@ -469,31 +504,109 @@ void OknoGra1::WczytajPrawdopodobienstwa()
                   ? 4
                   : ui->liczbaSymboliLineEdit_Bonus->text().toInt();
 
-    w_japko = ui->kwotaWygranejLineEdit_Japko->text().isEmpty()
-                  ? 0.75
-                  : ui->kwotaWygranejLineEdit_Japko->text().toFloat();
-    w_banan = ui->kwotaWygranejLineEdit_Banan->text().isEmpty()
-                  ? 1.25
-                  : ui->kwotaWygranejLineEdit_Banan->text().toFloat();
-    w_winogrono = ui->kwotaWygranejLineEdit_Winogronko->text().isEmpty()
-                      ? 2.0
-                      : ui->kwotaWygranejLineEdit_Winogronko->text().toFloat();
-    w_wisnia = ui->kwotaWygranejLineEdit_Wisnia->text().isEmpty()
-                   ? 3.0
-                   : ui->kwotaWygranejLineEdit_Wisnia->text().toFloat();
-    w_ananas = ui->kwotaWygranejLineEdit_Ananas->text().isEmpty()
-                   ? 5.0
-                   : ui->kwotaWygranejLineEdit_Ananas->text().toFloat();
-    w_kiwi = ui->kwotaWygranejLineEdit_Kiwi->text().isEmpty()
-                 ? 8.0
-                 : ui->kwotaWygranejLineEdit_Kiwi->text().toFloat();
+    if (l_japko == 0) {
+        l_japko = 8;
+        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna minimalna liczba jabłek – ustawiono domyślnie 8.");
+    }
+    if (l_banan == 0) {
+        l_banan = 8;
+        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna minimalna liczba bananów – ustawiono domyślnie 8.");
+    }
+    if (l_winogrono == 0) {
+        l_winogrono = 8;
+        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna minimalna liczba winogron – ustawiono domyślnie 8.");
+    }
+    if (l_wisnia == 0) {
+        l_wisnia = 8;
+        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna minimalna liczba wiśni – ustawiono domyślnie 8.");
+    }
+    if (l_ananas == 0) {
+        l_ananas = 8;
+        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna minimalna liczba ananasów – ustawiono domyślnie 8.");
+    }
+    if (l_kiwi == 0) {
+        l_kiwi = 8;
+        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna minimalna liczba kiwi – ustawiono domyślnie 8.");
+    }
+    if (l_bonus == 0) {
+        l_bonus = 4;
+        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna minimalna liczba bonusów – ustawiono domyślnie 4.");
+    }
+
+
+
+
+    QString s;
+    bool ok;
+
+    s = ui->kwotaWygranejLineEdit_Japko->text().replace(",", ".");
+    w_japko = s.toFloat(&ok);
+    if (!ok) {
+        w_japko = 0.75;
+        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna kwota wygranej dla jabłka – ustawiono domyślnie 0.75.");
+    }
+
+    s = ui->kwotaWygranejLineEdit_Banan->text().replace(",", ".");
+    w_banan = s.toFloat(&ok);
+    if (!ok) {
+        w_banan = 1.25;
+        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna kwota wygranej dla banana – ustawiono domyślnie 1.25.");
+    }
+
+    s = ui->kwotaWygranejLineEdit_Winogronko->text().replace(",", ".");
+    w_winogrono = s.toFloat(&ok);
+    if (!ok) {
+        w_winogrono = 2.0;
+        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna kwota wygranej dla winogrona – ustawiono domyślnie 2.0.");
+    }
+
+    s = ui->kwotaWygranejLineEdit_Wisnia->text().replace(",", ".");
+    w_wisnia = s.toFloat(&ok);
+    if (!ok) {
+        w_wisnia = 3.0;
+        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna kwota wygranej dla wiśni – ustawiono domyślnie 3.0.");
+    }
+
+    s = ui->kwotaWygranejLineEdit_Ananas->text().replace(",", ".");
+    w_ananas = s.toFloat(&ok);
+    if (!ok) {
+        w_ananas = 5.0;
+        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna kwota wygranej dla ananasa – ustawiono domyślnie 5.0.");
+    }
+
+    s = ui->kwotaWygranejLineEdit_Kiwi->text().replace(",", ".");
+    w_kiwi = s.toFloat(&ok);
+    if (!ok) {
+        w_kiwi = 8.0;
+        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna kwota wygranej dla kiwi – ustawiono domyślnie 8.0.");
+    }
+
 
 
     l_freespin = ui->liczbaFreeSpinowLineEdit->text().isEmpty() ? 10 : ui->liczbaFreeSpinowLineEdit->text().toInt();
     l_dodatkowychFreeSpinow = ui->liczbaDodatkowychSpinowLineEdit->text().isEmpty() ? 1 : ui->liczbaDodatkowychSpinowLineEdit->text().toInt();
+
+    ui->liczbaSymboliLineEdit_Japko->setText(QString::number(l_japko));
+    ui->liczbaSymboliLineEdit_Banan->setText(QString::number(l_banan));
+    ui->liczbaSymboliLineEdit_Winogronko->setText(QString::number(l_winogrono));
+    ui->liczbaSymboliLineEdit_Wisnia->setText(QString::number(l_wisnia));
+    ui->liczbaSymboliLineEdit_Ananas->setText(QString::number(l_ananas));
+    ui->liczbaSymboliLineEdit_Kiwi->setText(QString::number(l_kiwi));
+    ui->liczbaSymboliLineEdit_Bonus->setText(QString::number(l_bonus));
+
+
+    ui->kwotaWygranejLineEdit_Japko->setText(QString::number(w_japko));
+    ui->kwotaWygranejLineEdit_Banan->setText(QString::number(w_banan));
+    ui->kwotaWygranejLineEdit_Winogronko->setText(QString::number(w_winogrono));
+    ui->kwotaWygranejLineEdit_Wisnia->setText(QString::number(w_wisnia));
+    ui->kwotaWygranejLineEdit_Ananas->setText(QString::number(w_ananas));
+    ui->kwotaWygranejLineEdit_Kiwi->setText(QString::number(w_kiwi));
+
+    ui->liczbaFreeSpinowLineEdit->setText(QString::number(l_freespin));
+    ui->liczbaDodatkowychSpinowLineEdit->setText(QString::number(l_dodatkowychFreeSpinow));
+
+    ZapisDoPliku();
 }
-
-
 
 void OknoGra1::ZwiekszStawke()
 {
@@ -503,12 +616,91 @@ void OknoGra1::ZwiekszStawke()
     }
 }
 
-
-
 void OknoGra1::ZmniejszStawke()
 {
     if (stawka > 1) {
         stawka--;
         ui->StawkaLabel->setText(QString("Stawka: %1").arg(stawka));
     }
+}
+
+void OknoGra1::on_returnButton_select()
+{
+    WczytajPrawdopodobienstwa();
+
+    this->close();
+
+    if (oknoStartowe) {
+        oknoStartowe->show();
+        oknoStartowe->AktualizujSaldo();
+        oknoStartowe->WczytajDaneGra1();
+    } else {
+        qWarning() << "oknoStartowe is nullptr!";
+    }
+}
+
+void OknoGra1::ZapisDoPliku()
+{
+    QString nazwa_pliku = "danegra1.txt";
+
+    QFile plik(nazwa_pliku);
+    if (plik.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&plik);
+
+        /// Zapis prawdopodobieństw
+        out << p_japko << "\n" << p_banan << "\n" << p_winogrono << "\n" << p_wisnia << "\n" << p_ananas << "\n" << p_kiwi << "\n" << p_bonus << "\n";
+
+        /// Zapis liczb wymaganych znakow
+        out << l_japko << "\n" << l_banan << "\n" << l_winogrono << "\n" << l_wisnia << "\n" << l_ananas << "\n" << l_kiwi << "\n" << l_bonus << "\n";
+
+        /// Zapis mnoznikow
+        out << w_japko << "\n" << w_banan << "\n" << w_winogrono << "\n" << w_wisnia << "\n" << w_ananas << "\n" << w_kiwi << "\n";
+
+        /// Zapis bonusu
+        out << l_freespin << "\n";
+        out << l_dodatkowychFreeSpinow << "\n";
+
+
+
+        plik.close();
+        qDebug() << "Zapisano do pliku!" << nazwa_pliku;
+    } else {
+        qDebug() << "Nie udało się otworzyć pliku do zapisu:" << plik.errorString();
+    }
+}
+
+bool OknoGra1::WczytanieZPliku()
+{
+    QString nazwa_pliku = "danegra1.txt";
+    QFile plik(nazwa_pliku);
+
+    if (plik.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QTextStream in(&plik);
+
+        /// Prawdopodobieństwa
+        in >> p_japko >> p_banan >> p_winogrono >> p_wisnia >> p_ananas >> p_kiwi >> p_bonus;
+
+        /// Liczby
+        in >> l_japko >> l_banan >> l_winogrono >> l_wisnia >> l_ananas >> l_kiwi >> l_bonus;
+
+        /// Mnozniki
+        in >> w_japko >> w_banan >> w_winogrono >> w_wisnia >> w_ananas >> w_kiwi;
+
+        /// Bonus
+        in >> l_freespin;
+        in >> l_dodatkowychFreeSpinow;
+
+
+
+        plik.close();
+        qDebug() << "Wczytano dane z pliku!";
+    }
+    else
+    {
+        qDebug() << "Nie udało się otworzyć pliku do wczytania:" << plik.errorString();
+        return false;
+    }
+    return true;
 }

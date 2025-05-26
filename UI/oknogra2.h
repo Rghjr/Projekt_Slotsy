@@ -19,7 +19,7 @@ class OknoGra2 : public QMainWindow
 public:
     OknoGra2(OknoStartowe* startoweOkno, QWidget *parent);
     ~OknoGra2();
-    void UstawGrid(int **tablica, int rows, int cols);
+    void UstawGrid(QVector<QVector<int>> tablica, int rows, int cols);
     int PrzypiszOwocek();
     void LosujOdNowa();
     void WczytajPrawdopodobienstwa();
@@ -28,6 +28,9 @@ public:
     void AktualizujSaldo();
     float Winek(int x);
     void zmienStawke(const QString &tekst);
+    void ZapisDoPliku();
+    bool WczytanieZPliku();
+
 
     int p_japko, p_banan, p_winogrono, p_wisnia, p_bonus, sumaProporcji;
     float w_japko, w_banan, w_winogrono, w_wisnia, w_bonus;

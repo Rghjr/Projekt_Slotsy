@@ -2,6 +2,7 @@
 #define OKNOSTARTOWE_H
 
 #include <QMainWindow>
+#include <QListWidget>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -17,13 +18,18 @@ class OknoStartowe : public QMainWindow
 public:
     float saldo = 100;
 
-    void ustawSaldo(float nowe) { saldo = nowe; }
+    void ustawSaldo(float nowe) { saldo = nowe; AktualizujSaldo(); }
     float pobierzSaldo() const { return saldo; }
 
     OknoStartowe(QWidget *parent = nullptr);
     ~OknoStartowe();
     void EdytujSaldoPlus();
     void EdytujSaldoMinus();
+    void AktualizujSaldo();
+    void WczytajSaldo();
+    void WczytajDaneGra1();
+    void WczytajDaneGra2();
+
 
 
 

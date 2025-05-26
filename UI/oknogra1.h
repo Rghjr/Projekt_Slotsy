@@ -1,6 +1,7 @@
 #ifndef OKNOGRA1_H
 #define OKNOGRA1_H
 
+#include "oknostartowe.h"
 #include <QLabel>
 #include <QMainWindow>
 #include <QVector>
@@ -16,7 +17,7 @@ class OknoGra1 : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit OknoGra1(QWidget *parent = nullptr);
+    OknoGra1(OknoStartowe* startoweOkno, QWidget *parent);
     ~OknoGra1();
     void UstawGrid(QVector<QVector<int>> tablica, int rows, int cols);
     void AnimujGrawitacje();
@@ -31,18 +32,27 @@ public:
     void ZwiekszStawke();
     void ZmniejszStawke();
 
+    void ZapisDoPliku();
+    bool WczytanieZPliku();
+
     // Zmienna do przechowywania prawdopodobieństw
     int p_japko, p_banan, p_winogrono, p_wisnia, p_ananas, p_kiwi, p_bonus, sumaProporcji;
     int l_japko, l_banan, l_winogrono, l_wisnia, l_ananas, l_kiwi, l_bonus;
     int l_freespin, l_dodatkowychFreeSpinow;
+    bool bonus;
+    int freespiny;
     float w_japko, w_banan, w_winogrono, w_wisnia, w_ananas, w_kiwi;
     QTimer* autoSpinTimer = nullptr;
 
+private slots:
+
+    void on_returnButton_select();
 
 private:
     Ui::OknoGra1 *ui;
+    OknoStartowe* oknoStartowe;
     QVector<QVector<QLabel *>> gridLabels; // przechowujemy QLabel'e
-    float saldo = 100;
+    float saldo;
     int stawka = 5;
 };
 

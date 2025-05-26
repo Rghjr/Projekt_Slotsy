@@ -3,12 +3,14 @@
 #include "oknogra2.h"
 #include "ui_oknostartowe.h"
 #include "gra1mechaniki.h"
+#include "gra2mechaniki.h"
 #include <QProcess>
 #include <QFile>
 #include <QMessageBox>
 #include <cstdlib>
 #include <QApplication>
 #include <qapplication.h>
+#include <QListWidget>
 
 
 OknoStartowe::OknoStartowe(QWidget *parent)
@@ -22,9 +24,13 @@ OknoStartowe::OknoStartowe(QWidget *parent)
     ui->logoLabel->setPixmap(logo); // Użycie istniejącego QLabel
     ui->logoLabel->setScaledContents(false); // Dopasowanie do rozmiaru
     ui->logoLabel->setAlignment(Qt::AlignCenter); // Wyśrodkowanie
-    ui->SaldoLabel->setText(QString("Saldo: %1").arg(saldo));
     connect(ui->plusButton, &QPushButton::clicked, this, &OknoStartowe::EdytujSaldoPlus);
     connect(ui->minusButton, &QPushButton::clicked, this, &OknoStartowe::EdytujSaldoMinus);
+
+    WczytajDaneGra1();
+    WczytajDaneGra2();
+    WczytajSaldo();
+
 }
 
 OknoStartowe::~OknoStartowe()
@@ -39,7 +45,7 @@ void OknoStartowe::on_firstGameButton_clicked()
     int rows = 5, cols = 6;
     QVector<QVector<int>> tablica = Gra1Mechaniki::GenerujSymbole(rows, cols); // Generacja symboli
 
-    OknoGra1 *gra = new OknoGra1(); // Tworzymy nowe okno gry
+    OknoGra1 *gra = new OknoGra1(this, nullptr); // Tworzymy nowe okno gry
     gra->setAttribute(Qt::WA_DeleteOnClose); // Zapewniamy automatyczne usunięcie po zamknięciu
     gra->show();
     gra->UstawGrid(tablica, rows, cols);
@@ -51,22 +57,12 @@ void OknoStartowe::on_secondGameButton_clicked()
     hide();
 
     int rows = 3, cols = 3;
-    int **tablica = new int *[rows];
-    for (int i = 0; i < rows; ++i) {
-        tablica[i] = new int[cols];
-    }
+    QVector<QVector<int>> tablica = Gra2Mechaniki::GenerujSymbole(rows, cols);
 
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
-            tablica[i][j] = rand() % 7;
-
-    OknoGra2 *gra = new OknoGra2(this, nullptr);        // Tworzenia okna z grą
+    OknoGra2 *gra = new OknoGra2(this, nullptr); // Tworzenia okna z grą
+    gra->setAttribute(Qt::WA_DeleteOnClose);
     gra->show();
     gra->UstawGrid(tablica, rows, cols);
-
-    for (int i = 0; i < rows; ++i)
-        delete[] tablica[i];
-    delete[] tablica;
 }
 
 void OknoStartowe::on_exitButton_clicked()
@@ -83,7 +79,7 @@ void OknoStartowe::EdytujSaldoPlus()
         return;
     }
     saldo += amount;
-    ui->SaldoLabel->setText(QString("Saldo: %1").arg(saldo));
+    AktualizujSaldo();
 }
 
 void OknoStartowe::EdytujSaldoMinus()
@@ -101,7 +97,99 @@ void OknoStartowe::EdytujSaldoMinus()
         QMessageBox::warning(this, "Błąd", "Nie można zejść poniżej zera!");
     }
 
+    AktualizujSaldo();
+}
+
+void OknoStartowe::AktualizujSaldo()
+{
+    QFile file("Saldo.txt");
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << saldo << "\n";
+        file.close();
+    } else {
+        qWarning("Nie można otworzyć pliku Saldo.txt do zapisu");
+    }
     ui->SaldoLabel->setText(QString("Saldo: %1").arg(saldo));
 }
 
+void OknoStartowe::WczytajSaldo()
+{
+    QFile file("Saldo.txt");
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        QString line = in.readLine().trimmed();
+        bool ok = false;
+        float wczytaneSaldo = line.toFloat(&ok);
+        if (ok) {
+            saldo = wczytaneSaldo;
+        } else {
+            saldo = 100.0f;  // albo jakaś wartość domyślna, gdy plik jest uszkodzony
+        }
+        file.close();
+    } else {
+        saldo = 100.0f;  // jeśli pliku nie ma, saldo zaczynamy od 0
+    }
+    ui->SaldoLabel->setText(QString("Saldo: %1").arg(saldo));
+}
+
+void OknoStartowe::WczytajDaneGra1()
+{
+    QFile file("wygrane_1.txt");
+
+    if (!file.exists()) //sprawdzanie czy plik istnieje
+    {
+        if (file.open(QIODevice::WriteOnly)) {
+            QTextStream out(&file);
+            file.close();
+        }
+    }
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning("Nie można otworzyć pliku wygrane_1.txt");
+        return;
+    }
+
+    ui->Gra_1_listWidget->clear();
+
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        if (!line.isEmpty()) {
+            ui->Gra_1_listWidget->addItem(line);
+        }
+    }
+
+    file.close();
+}
+
+void OknoStartowe::WczytajDaneGra2()
+{
+    QFile file("wygrane_2.txt");
+
+    if (!file.exists()) //sprawdzanie czy plik istnieje
+    {
+        if (file.open(QIODevice::WriteOnly)) {
+            QTextStream out(&file);
+            file.close();
+        }
+    }
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning("Nie można otworzyć pliku wygrane_2.txt");
+        return;
+    }
+
+    ui->Gra_2_listWidget->clear();
+
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        if (!line.isEmpty()) {
+            ui->Gra_2_listWidget->addItem(line);
+        }
+    }
+
+    file.close();
+}
 
