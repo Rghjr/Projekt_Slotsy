@@ -6,6 +6,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QTimer>
 #include <QFile>
+#include <QLineEdit>
 #include <QTextStream>
 #include <QMessageBox>
 #include "wygrane.h"
@@ -96,7 +97,7 @@ OknoGra2::~OknoGra2()
     delete ui;
 }
 
-void OknoGra2::UstawGrid(int ** tablica, int rows, int cols)
+void OknoGra2::UstawGrid(QVector<QVector<int>> tablica, int rows, int cols)
 {
     QStringList owoce = {"🍎", "🍌", "🍇", "🍒", "🍍", "🥝", "🎁"};
 
@@ -230,6 +231,13 @@ void OknoGra2::WczytajPrawdopodobienstwa()
     p_wisnia = ui->WisniaEdit->text().isEmpty() ? 15 : ui->WisniaEdit->text().toInt();
     p_bonus = ui->BonusEdit->text().isEmpty() ? 10 : ui->BonusEdit->text().toInt();
 
+    w_japko = ui->kwotaWygranejLineEdit_Japko->text().isEmpty() ? 0.75 : ui->kwotaWygranejLineEdit_Japko->text().toFloat();
+    w_banan = ui->kwotaWygranejLineEdit_Banan_->text().isEmpty() ? 1.25 : ui->kwotaWygranejLineEdit_Banan_->text().toFloat();
+    w_winogrono = ui->kwotaWygranejLineEdit_Winogronko_->text().isEmpty() ? 2.0 : ui->kwotaWygranejLineEdit_Winogronko_->text().toFloat();
+    w_wisnia = ui->kwotaWygranejLineEdit_Wisnia->text().isEmpty() ? 3.0 : ui->kwotaWygranejLineEdit_Wisnia->text().toFloat();
+    w_bonus =  ui->kwotaWygranejLineEdit_Bonus->text().isEmpty() ? 5.0 :  ui->kwotaWygranejLineEdit_Bonus->text().toFloat();
+
+    mn_bonus = ui->mnoznikBonusuLineEdit->text().isEmpty() ? 10.0 : ui->mnoznikBonusuLineEdit->text().toFloat();
     l_freespin = ui->LiczbaFreeSpinowLineEdit->text().isEmpty() ? 5 : ui->LiczbaFreeSpinowLineEdit->text().toInt();
     l_dodatkowychFreeSpinow = ui->LiczbaDodatkowychFreeSpinowLineEdit->text().isEmpty() ? 1 : ui->LiczbaDodatkowychFreeSpinowLineEdit->text().toInt();
 
@@ -238,60 +246,40 @@ void OknoGra2::WczytajPrawdopodobienstwa()
 
 
 
-    // Ustawiamy na 0 wszystko co ujemne - prawdopodobieństwa
+    // Ustawiamy na 0 wszystko co ujemne i nie int - prawdopodobieństwa
     bool ok;
-    p_japko = ui->JapkoEdit->text().toInt(&ok);
+
+    std::vector<int> owoce_p = {p_japko, p_banan, p_winogrono, p_wisnia, p_bonus};
+    std::vector<QLineEdit*> edits_p = {ui->JapkoEdit,
+                                      ui->BananEdit,
+                                      ui->WinogronkoEdit,
+                                      ui->WisniaEdit,
+                                      ui->BonusEdit};
+
+    auto it_owoc_p = owoce_p.begin();
+    auto it_edit_p = edits_p.begin();
+
+    while (it_owoc_p != owoce_p.end() && it_edit_p != edits_p.end()) //iteruje przez wartości i sprawdza ich konwersje do float
+    {
+        *it_owoc_p = (*it_edit_p)->text().toInt(&ok);
+        if (!ok || *it_owoc_p < 0) break;
+        ++it_owoc_p;  // Przesunięcie iteratora
+        ++it_edit_p;
+    }
+
     if (!ok) {
         p_japko = 0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawne prawdopodobieństwo jabłka – ustawiono na 0.");
-    } else if (p_japko < 0) {
-        p_japko = 0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Prawdopodobieństwo jabłka nie może być ujemne – ustawiono na 0.");
-    }
-
-    p_banan = ui->BananEdit->text().toInt(&ok);
-    if (!ok) {
         p_banan = 0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawne prawdopodobieństwo banana – ustawiono na 0.");
-    } else if (p_banan < 0) {
-        p_banan = 0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Prawdopodobieństwo banana nie może być ujemne – ustawiono na 0.");
-    }
-
-    p_winogrono = ui->WinogronkoEdit->text().toInt(&ok);
-    if (!ok) {
         p_winogrono = 0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawne prawdopodobieństwo winogrona – ustawiono na 0.");
-    } else if (p_winogrono < 0) {
-        p_winogrono = 0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Prawdopodobieństwo winogrona nie może być ujemne – ustawiono na 0.");
-    }
-
-    p_wisnia = ui->WisniaEdit->text().toInt(&ok);
-    if (!ok) {
         p_wisnia = 0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawne prawdopodobieństwo wiśni – ustawiono na 0.");
-    } else if (p_wisnia < 0) {
-        p_wisnia = 0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Prawdopodobieństwo wiśni nie może być ujemne – ustawiono na 0.");
-    }
-
-    p_bonus = ui->BonusEdit->text().toInt(&ok);
-    if (!ok) {
         p_bonus = 0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawne prawdopodobieństwo bonusu – ustawiono na 0.");
-    } else if (p_bonus < 0) {
-        p_bonus = 0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Prawdopodobieństwo bonusu nie może być ujemne – ustawiono na 0.");
+        QMessageBox::warning(this, "Niepoprawna wartość", "Przypisano wartości domyślne");
     }
-
-
 
 
     // Jeśli wszystkie są zerowe, to ustawiamy bezpiecznie na 1
     if (p_japko == 0 && p_banan == 0 && p_winogrono == 0 && p_wisnia == 0 && p_bonus == 0)
     {
-        QMessageBox::warning(this, "Niepoprawna wartość", "Wszystkie prawdopodobieńśtwa nie mogą wynosić 0. Ustawiono 1.");
         p_japko = 1;
         p_banan = 1;
         p_winogrono = 1;
@@ -300,10 +288,8 @@ void OknoGra2::WczytajPrawdopodobienstwa()
     }
 
 
-
     // Obliczamy sumę proporcji
     sumaProporcji = p_japko + p_banan + p_winogrono + p_wisnia + p_bonus;
-
 
 
     // Ustawiamy te wartości z powrotem do QLineEdit, żeby było widać co naprawdę siedzi
@@ -315,45 +301,36 @@ void OknoGra2::WczytajPrawdopodobienstwa()
 
 
     // ustawiamy na domyślne jeżeli nie poprawne wygrane
-    QString s;
-    s = ui->kwotaWygranejLineEdit_Japko->text().replace(",", ".");
-    w_japko = s.toFloat(&ok);
+    QString s_w;
+    std::vector<float> owoce_w = {w_japko, w_banan, w_winogrono, w_wisnia, w_bonus, mn_bonus};
+    std::vector<QLineEdit*> edits_w = {ui->kwotaWygranejLineEdit_Japko,
+                                    ui->kwotaWygranejLineEdit_Banan_,
+                                    ui->kwotaWygranejLineEdit_Winogronko_,
+                                    ui->kwotaWygranejLineEdit_Wisnia,
+                                    ui->kwotaWygranejLineEdit_Bonus,
+                                    ui->mnoznikBonusuLineEdit};
+
+    auto it_owoc_w = owoce_w.begin();
+    auto it_edit_w = edits_w.begin();
+
+    while (it_owoc_w != owoce_w.end() && it_edit_w != edits_w.end()) //iteruje przez wartości i sprawdza ich konwersje do float
+    {
+        s_w = (*it_edit_w)->text().replace(",", ".");
+        *it_owoc_w = s_w.toFloat(&ok);
+        if (!ok) break;
+        ++it_owoc_w;  // Przesunięcie iteratora
+        ++it_edit_w;
+    }
+
     if (!ok) {
         w_japko = 0.75;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna kwota wygranej dla jabłka – ustawiono domyślnie 0.75.");
-    }
-    s = ui->kwotaWygranejLineEdit_Banan_->text().replace(",", ".");
-    w_banan = s.toFloat(&ok);
-    if (!ok) {
         w_banan = 1.25;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna kwota wygranej dla banana – ustawiono domyślnie 1.25.");
-    }
-    s = ui->kwotaWygranejLineEdit_Winogronko_->text().replace(",", ".");
-    w_winogrono = s.toFloat(&ok);
-    if (!ok) {
         w_winogrono = 2.0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna kwota wygranej dla winogrona – ustawiono domyślnie 2.0.");
-    }
-    s = ui->kwotaWygranejLineEdit_Wisnia->text().replace(",", ".");
-    w_wisnia = s.toFloat(&ok);
-    if (!ok) {
         w_wisnia = 3.0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna kwota wygranej dla wiśni – ustawiono domyślnie 3.0.");
-    }
-    s = ui->kwotaWygranejLineEdit_Bonus->text().replace(",", ".");
-    w_bonus = s.toFloat(&ok);
-    if (!ok) {
         w_bonus = 5.0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawna kwota wygranej dla bonusu – ustawiono domyślnie 5.0.");
-    }
-    s = ui->mnoznikBonusuLineEdit->text().replace(",", ".");
-    mn_bonus = s.toFloat(&ok);
-    if (!ok) {
         mn_bonus = 10.0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Niepoprawny mnożnik bonusu – ustawiono domyślnie 10.0.");
+        QMessageBox::warning(this, "Niepoprawna wartość", "Przypisano wartości domyślne");
     }
-
-
 
 
     ui->kwotaWygranejLineEdit_Japko->setText(QString::number(w_japko));

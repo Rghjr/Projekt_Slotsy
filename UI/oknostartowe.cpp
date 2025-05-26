@@ -3,6 +3,7 @@
 #include "oknogra2.h"
 #include "ui_oknostartowe.h"
 #include "gra1mechaniki.h"
+#include "gra2mechaniki.h"
 #include <QProcess>
 #include <QFile>
 #include <QMessageBox>
@@ -56,22 +57,12 @@ void OknoStartowe::on_secondGameButton_clicked()
     hide();
 
     int rows = 3, cols = 3;
-    int **tablica = new int *[rows];
-    for (int i = 0; i < rows; ++i) {
-        tablica[i] = new int[cols];
-    }
+    QVector<QVector<int>> tablica = Gra2Mechaniki::GenerujSymbole(rows, cols);
 
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
-            tablica[i][j] = rand() % 7;
-
-    OknoGra2 *gra = new OknoGra2(this, nullptr);        // Tworzenia okna z grą
+    OknoGra2 *gra = new OknoGra2(this, nullptr); // Tworzenia okna z grą
+    gra->setAttribute(Qt::WA_DeleteOnClose);
     gra->show();
     gra->UstawGrid(tablica, rows, cols);
-
-    for (int i = 0; i < rows; ++i)
-        delete[] tablica[i];
-    delete[] tablica;
 }
 
 void OknoStartowe::on_exitButton_clicked()

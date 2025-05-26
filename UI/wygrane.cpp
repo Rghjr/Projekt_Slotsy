@@ -24,18 +24,16 @@ void Wygrane::append(const QString &other) {
     data.append(other);
 }
 
-QString formatWygrana(float kwota, const QString& symbol, int ilosc) {
-    return QString("%1 - %2 - %3")
-    .arg(kwota, 0, 'f', 2)
-        .arg(symbol)
-        .arg(ilosc);
-}
+// QString formatWygrana(float kwota, const QString& symbol, int ilosc) {
+//     return QString("Wygrana %1: %2")
+//         .arg(ilosc);
+//         .arg(kwota, 0, 'f', 2);
+// }
 
 void Wygrane::zapisz1(float kwota, const QString &symbol, int ilosc) {
-    QString linia = QString("%1 - %2 - %3")
-    .arg(kwota, 0, 'f', 2)
-        .arg(symbol)
-        .arg(ilosc);
+    QString linia = QString("Wygrana %1: %2 zł")
+                        .arg(symbol)
+                        .arg(kwota, 0, 'f', 2);
 
     QFile file("wygrane_1.txt");
     QString staraZawartosc;
@@ -57,10 +55,9 @@ void Wygrane::zapisz1(float kwota, const QString &symbol, int ilosc) {
 }
 
 void Wygrane::zapisz2(float kwota, const QString &symbol, int ilosc) {
-    QString linia = QString("%1 - %2 - %3")
-    .arg(kwota, 0, 'f', 2)
-        .arg(symbol)
-        .arg(ilosc);
+    QString linia = QString("Wygrana %1: %2 zł")
+                        .arg(symbol)
+                        .arg(kwota, 0, 'f', 2);
 
     QFile file("wygrane_2.txt");
     QString staraZawartosc;

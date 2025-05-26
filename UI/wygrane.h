@@ -22,6 +22,7 @@ public:
 
 private:
     QString data;
+
 };
 
 #endif // MYSTRING_H
