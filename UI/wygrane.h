@@ -15,7 +15,6 @@ public:
     void append(const QString &other);
     QString toUpper() const;
     QString toLower() const;
-    QString formatWygrana(float kwota, const QString& symbol, int ilosc);
     void zapisz1(float kwota, const QString &symbol, int ilosc);
     void zapisz2(float kwota, const QString &symbol, int ilosc);
 

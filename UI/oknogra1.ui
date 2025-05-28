@@ -46,7 +46,7 @@
        <item row="0" column="3">
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Mnoznik</string>
+          <string>Mnożnik</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -168,7 +168,7 @@
        <item row="0" column="2">
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Ilosc</string>
+          <string>Ilość</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -191,14 +191,18 @@
        <item row="7" column="3">
         <widget class="QLabel" name="LiczbaFreeSpinowTekst">
          <property name="text">
-          <string>Liczba Free spinow</string>
+          <string>Liczba FreeSpinów</string>
          </property>
         </widget>
        </item>
        <item row="9" column="2">
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Liczba dodatkowych</string>
+          <string>Liczba dodatkowych
+ FreeSpinów</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -419,7 +423,7 @@
     <item row="0" column="0">
      <widget class="QPushButton" name="powrotButton">
       <property name="text">
-       <string>Powrot</string>
+       <string>Powrót</string>
       </property>
      </widget>
     </item>
@@ -431,7 +435,7 @@
      <x>0</x>
      <y>0</y>
      <width>721</width>
-     <height>17</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

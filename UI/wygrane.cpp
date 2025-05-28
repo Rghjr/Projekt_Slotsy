@@ -24,12 +24,6 @@ void Wygrane::append(const QString &other) {
     data.append(other);
 }
 
-// QString formatWygrana(float kwota, const QString& symbol, int ilosc) {
-//     return QString("Wygrana %1: %2")
-//         .arg(ilosc);
-//         .arg(kwota, 0, 'f', 2);
-// }
-
 void Wygrane::zapisz1(float kwota, const QString &symbol, int ilosc) {
     QString linia = QString("Wygrana %1: %2 zł")
                         .arg(symbol)

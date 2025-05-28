@@ -4,6 +4,7 @@
 #include "ui_oknostartowe.h"
 #include "gra1mechaniki.h"
 #include "gra2mechaniki.h"
+#include "obslugawyjatkow.h"
 #include <QProcess>
 #include <QFile>
 #include <QMessageBox>
@@ -72,32 +73,42 @@ void OknoStartowe::on_exitButton_clicked()
 
 void OknoStartowe::EdytujSaldoPlus()
 {
+    try {
     bool ok;
     float amount = ui->amountQLineEdit->text().toFloat(&ok);
-    if (!ok) {
-        QMessageBox::warning(this, "Błąd", "Podaj poprawną liczbę!");
-        return;
-    }
+    if (!ok) throw ZlyInput();
     saldo += amount;
     AktualizujSaldo();
+    } catch (std::exception& ZlyInput)
+    {
+        QMessageBox::warning(this, "Błąd wejścia", ZlyInput.what());
+        return;
+    }
 }
 
 void OknoStartowe::EdytujSaldoMinus()
 {
+    try {
     bool ok;
     float amount = ui->amountQLineEdit->text().toFloat(&ok);
-    if (!ok) {
-        QMessageBox::warning(this, "Błąd", "Podaj poprawną liczbę!");
-        return;
-    }
+
+    if (!ok) throw ZlyInput();
+
     saldo -= amount;
-    if (saldo < 0)
-    {
-        saldo = 0;
-        QMessageBox::warning(this, "Błąd", "Nie można zejść poniżej zera!");
-    }
+
+    if (saldo < 0) throw PonizejZera();
 
     AktualizujSaldo();
+    } catch (const ZlyInput& ZlyInput)
+    {
+        QMessageBox::warning(this, "Błąd wejścia", ZlyInput.what());
+        return;
+    }
+    catch (const PonizejZera& PonizejZera)
+    {
+        QMessageBox::warning(this, "Błąd wejścia", PonizejZera.what());
+        return;
+    }
 }
 
 void OknoStartowe::AktualizujSaldo()

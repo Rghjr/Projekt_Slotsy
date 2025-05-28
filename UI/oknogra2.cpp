@@ -1,5 +1,6 @@
 #include "oknogra2.h"
 #include "ui_oknogra2.h"
+#include "obslugawyjatkow.h"
 #include <QFont>
 #include <QThread>
 #include <QPropertyAnimation>
@@ -38,8 +39,25 @@ OknoGra2::OknoGra2(OknoStartowe* startoweOkno, QWidget *parent)
     bonus = false;
     spiny_bonus = 0;
 
-    /// WCZYTANIE Z PLIKU I USTAWIENIE WSZYSTKIEGO WEDŁUG TEGO
+    //Domyślne wartości po otwarciu okna
+    ui->JapkoEdit->setText("30");
+    ui->BananEdit->setText("25");
+    ui->WinogronkoEdit->setText("20");
+    ui->WisniaEdit->setText("15");
+    ui->BonusEdit->setText("10");
 
+    ui->kwotaWygranejLineEdit_Japko->setText("0.75");
+    ui->kwotaWygranejLineEdit_Banan_->setText("1.25");
+    ui->kwotaWygranejLineEdit_Winogronko_->setText("2.0");
+    ui->kwotaWygranejLineEdit_Wisnia->setText("3.0");
+    ui->kwotaWygranejLineEdit_Bonus->setText("5.0");
+
+    ui->mnoznikBonusuLineEdit->setText("10.0");
+    ui->Freespiny_Label->setText(QString("FreeSpiny: %1").arg(spiny_bonus));
+    ui->LiczbaFreeSpinowLineEdit->setText("5");
+    ui->LiczbaDodatkowychFreeSpinowLineEdit->setText("1");
+
+    /// WCZYTANIE Z PLIKU I USTAWIENIE WSZYSTKIEGO WEDŁUG TEGO
     if (WczytanieZPliku())
     {
         if (l1) ui->l_1_check->setChecked(true);
@@ -90,6 +108,7 @@ OknoGra2::OknoGra2(OknoStartowe* startoweOkno, QWidget *parent)
 
         WczytajPrawdopodobienstwa();
     }
+     WczytajPrawdopodobienstwa();
 }
 
 OknoGra2::~OknoGra2()
@@ -127,7 +146,6 @@ void OknoGra2::UstawGrid(QVector<QVector<int>> tablica, int rows, int cols)
 
 int OknoGra2::PrzypiszOwocek()
 {
-
     // Zbieramy wartości prawdopodobieństw przed losowaniem
     WczytajPrawdopodobienstwa();
 
@@ -145,11 +163,11 @@ int OknoGra2::PrzypiszOwocek()
     if (a < p_japko + p_banan + p_winogrono + p_wisnia)
         return 3; // Wiśnia
     return 4;     // Bonus (domyślnie)
-
 }
 
 void OknoGra2::LosujOdNowa()
 {
+    try{
     if (saldo < stawka)
     {
         QMessageBox::warning(this, "Bieda", "Za małe saldo aby spinować");
@@ -201,6 +219,12 @@ void OknoGra2::LosujOdNowa()
     else SprawdzWygrana();
 
     ui->Freespiny_Label->setText(QString("FreeSpiny: %1").arg(spiny_bonus));
+    } catch (std::exception& ZlyInput)
+    {
+        QMessageBox::warning(this, "Błąd wejścia", ZlyInput.what());
+        ui->SPINPRZYCISK->setEnabled(true);
+        return;
+    }
 }
 
 void OknoGra2::Autospin(bool checked)
@@ -223,74 +247,64 @@ void OknoGra2::Autospin(bool checked)
 }
 
 void OknoGra2::WczytajPrawdopodobienstwa()
-{   
-    // Pobieramy wartości od użytkownika, jeśli pole nie jest puste
-    p_japko = ui->JapkoEdit->text().isEmpty() ? 30 : ui->JapkoEdit->text().toInt();
-    p_banan = ui->BananEdit->text().isEmpty() ? 25 : ui->BananEdit->text().toInt();
-    p_winogrono = ui->WinogronkoEdit->text().isEmpty() ? 20 : ui->WinogronkoEdit->text().toInt();
-    p_wisnia = ui->WisniaEdit->text().isEmpty() ? 15 : ui->WisniaEdit->text().toInt();
-    p_bonus = ui->BonusEdit->text().isEmpty() ? 10 : ui->BonusEdit->text().toInt();
-
-    w_japko = ui->kwotaWygranejLineEdit_Japko->text().isEmpty() ? 0.75 : ui->kwotaWygranejLineEdit_Japko->text().toFloat();
-    w_banan = ui->kwotaWygranejLineEdit_Banan_->text().isEmpty() ? 1.25 : ui->kwotaWygranejLineEdit_Banan_->text().toFloat();
-    w_winogrono = ui->kwotaWygranejLineEdit_Winogronko_->text().isEmpty() ? 2.0 : ui->kwotaWygranejLineEdit_Winogronko_->text().toFloat();
-    w_wisnia = ui->kwotaWygranejLineEdit_Wisnia->text().isEmpty() ? 3.0 : ui->kwotaWygranejLineEdit_Wisnia->text().toFloat();
-    w_bonus =  ui->kwotaWygranejLineEdit_Bonus->text().isEmpty() ? 5.0 :  ui->kwotaWygranejLineEdit_Bonus->text().toFloat();
-
-    mn_bonus = ui->mnoznikBonusuLineEdit->text().isEmpty() ? 10.0 : ui->mnoznikBonusuLineEdit->text().toFloat();
-    l_freespin = ui->LiczbaFreeSpinowLineEdit->text().isEmpty() ? 5 : ui->LiczbaFreeSpinowLineEdit->text().toInt();
-    l_dodatkowychFreeSpinow = ui->LiczbaDodatkowychFreeSpinowLineEdit->text().isEmpty() ? 1 : ui->LiczbaDodatkowychFreeSpinowLineEdit->text().toInt();
-
-    ui->LiczbaFreeSpinowLineEdit->setText(QString::number(l_freespin));
-    ui->LiczbaDodatkowychFreeSpinowLineEdit->setText(QString::number(l_dodatkowychFreeSpinow));
-
-
-
-    // Ustawiamy na 0 wszystko co ujemne i nie int - prawdopodobieństwa
+{
     bool ok;
-
-    std::vector<int> owoce_p = {p_japko, p_banan, p_winogrono, p_wisnia, p_bonus};
-    std::vector<QLineEdit*> edits_p = {ui->JapkoEdit,
+    //obsługa wyjątków - sprawdzenie czy wartości są poprawnie wprowadzone
+    std::vector<int*> elem_int = {&p_japko, &p_banan, &p_winogrono, &p_wisnia, &p_bonus, &l_freespin, &l_dodatkowychFreeSpinow};
+    std::vector<QLineEdit*> edits_int = {ui->JapkoEdit,
                                       ui->BananEdit,
                                       ui->WinogronkoEdit,
                                       ui->WisniaEdit,
-                                      ui->BonusEdit};
+                                      ui->BonusEdit,
+                                      ui->LiczbaFreeSpinowLineEdit,
+                                      ui->LiczbaDodatkowychFreeSpinowLineEdit};
 
-    auto it_owoc_p = owoce_p.begin();
-    auto it_edit_p = edits_p.begin();
+    auto it_elem_int = elem_int.begin();
+    auto it_edits_int = edits_int.begin();
 
-    while (it_owoc_p != owoce_p.end() && it_edit_p != edits_p.end()) //iteruje przez wartości i sprawdza ich konwersje do float
+
+    while (it_elem_int != elem_int.end() && it_edits_int != edits_int.end()) //iteruje przez wartości i sprawdza ich konwersje do int
     {
-        *it_owoc_p = (*it_edit_p)->text().toInt(&ok);
-        if (!ok || *it_owoc_p < 0) break;
-        ++it_owoc_p;  // Przesunięcie iteratora
-        ++it_edit_p;
+        **it_elem_int = (*it_edits_int)->text().toInt(&ok);
+        if (!ok || **it_elem_int < 0) { ok = false; break; }
+        ++it_elem_int;  // Przesunięcie iteratora
+        ++it_edits_int;
     }
 
-    if (!ok) {
-        p_japko = 0;
-        p_banan = 0;
-        p_winogrono = 0;
-        p_wisnia = 0;
-        p_bonus = 0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Przypisano wartości domyślne");
-    }
-
+    if (!ok) throw ZlyInput();
 
     // Jeśli wszystkie są zerowe, to ustawiamy bezpiecznie na 1
     if (p_japko == 0 && p_banan == 0 && p_winogrono == 0 && p_wisnia == 0 && p_bonus == 0)
     {
-        p_japko = 1;
-        p_banan = 1;
-        p_winogrono = 1;
-        p_wisnia = 1;
-        p_bonus = 1;
+        p_japko = p_banan = p_winogrono = p_wisnia = p_bonus = 1;
     }
 
+    // ustawiamy na domyślne jeżeli nie poprawne wygrane
+    QString s_w;
+    std::vector<float*> elem_float = {&w_japko, &w_banan, &w_winogrono, &w_wisnia, &w_bonus, &mn_bonus};
+    std::vector<QLineEdit*> edits_float = {ui->kwotaWygranejLineEdit_Japko,
+                                    ui->kwotaWygranejLineEdit_Banan_,
+                                    ui->kwotaWygranejLineEdit_Winogronko_,
+                                    ui->kwotaWygranejLineEdit_Wisnia,
+                                    ui->kwotaWygranejLineEdit_Bonus,
+                                    ui->mnoznikBonusuLineEdit};
+
+    auto it_elem_float = elem_float.begin();
+    auto it_edits_float = edits_float.begin();
+
+    while (it_elem_float != elem_float.end() && it_edits_float != edits_float.end()) //iteruje przez wartości i sprawdza ich konwersje do float
+    {
+        s_w = (*it_edits_float)->text().replace(",", ".");
+        **it_elem_float = s_w.toFloat(&ok);
+        if (!ok || **it_elem_float < 0) { ok = false; break; }
+        ++it_elem_float;  // Przesunięcie iteratora
+        ++it_edits_float;
+    }
+
+    if (!ok) throw ZlyInput();
 
     // Obliczamy sumę proporcji
     sumaProporcji = p_japko + p_banan + p_winogrono + p_wisnia + p_bonus;
-
 
     // Ustawiamy te wartości z powrotem do QLineEdit, żeby było widać co naprawdę siedzi
     ui->JapkoEdit->setText(QString::number(p_japko));
@@ -299,49 +313,15 @@ void OknoGra2::WczytajPrawdopodobienstwa()
     ui->WisniaEdit->setText(QString::number(p_wisnia));
     ui->BonusEdit->setText(QString::number(p_bonus));
 
-
-    // ustawiamy na domyślne jeżeli nie poprawne wygrane
-    QString s_w;
-    std::vector<float> owoce_w = {w_japko, w_banan, w_winogrono, w_wisnia, w_bonus, mn_bonus};
-    std::vector<QLineEdit*> edits_w = {ui->kwotaWygranejLineEdit_Japko,
-                                    ui->kwotaWygranejLineEdit_Banan_,
-                                    ui->kwotaWygranejLineEdit_Winogronko_,
-                                    ui->kwotaWygranejLineEdit_Wisnia,
-                                    ui->kwotaWygranejLineEdit_Bonus,
-                                    ui->mnoznikBonusuLineEdit};
-
-    auto it_owoc_w = owoce_w.begin();
-    auto it_edit_w = edits_w.begin();
-
-    while (it_owoc_w != owoce_w.end() && it_edit_w != edits_w.end()) //iteruje przez wartości i sprawdza ich konwersje do float
-    {
-        s_w = (*it_edit_w)->text().replace(",", ".");
-        *it_owoc_w = s_w.toFloat(&ok);
-        if (!ok) break;
-        ++it_owoc_w;  // Przesunięcie iteratora
-        ++it_edit_w;
-    }
-
-    if (!ok) {
-        w_japko = 0.75;
-        w_banan = 1.25;
-        w_winogrono = 2.0;
-        w_wisnia = 3.0;
-        w_bonus = 5.0;
-        mn_bonus = 10.0;
-        QMessageBox::warning(this, "Niepoprawna wartość", "Przypisano wartości domyślne");
-    }
-
-
     ui->kwotaWygranejLineEdit_Japko->setText(QString::number(w_japko));
     ui->kwotaWygranejLineEdit_Banan_->setText(QString::number(w_banan));
     ui->kwotaWygranejLineEdit_Winogronko_->setText(QString::number(w_winogrono));
     ui->kwotaWygranejLineEdit_Wisnia->setText(QString::number(w_wisnia));
     ui->kwotaWygranejLineEdit_Bonus->setText(QString::number(w_bonus));
 
-
-
     ui->mnoznikBonusuLineEdit->setText(QString::number(mn_bonus));
+    ui->LiczbaFreeSpinowLineEdit->setText(QString::number(l_freespin));
+    ui->LiczbaDodatkowychFreeSpinowLineEdit->setText(QString::number(l_dodatkowychFreeSpinow));
 
 
 
@@ -576,6 +556,7 @@ void OknoGra2::zmienStawke(const QString &tekst)
 
 void OknoGra2::on_returnButton_select()
 {
+    try {
     WczytajPrawdopodobienstwa();
 
     this->close();
@@ -586,6 +567,11 @@ void OknoGra2::on_returnButton_select()
         oknoStartowe->WczytajDaneGra2();
     } else {
         qWarning() << "oknoStartowe is nullptr!";
+    }
+    } catch (std::exception& ZlyInput)
+    {
+        QMessageBox::warning(this, "Błąd wejścia", ZlyInput.what());
+        return;
     }
 }
 

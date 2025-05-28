@@ -20,6 +20,7 @@ add_library(UI STATIC
     oknogra2.cpp oknogra2.h
     ${UI_HEADERS}
     wygrane.h wygrane.cpp
+    obslugawyjatkow.h obslugawyjatkow.cpp
 
     )
 
