@@ -1,14 +1,11 @@
 #include "oknostartowe.h"
-#include "oknogra1.h"
-#include "oknogra2.h"
+#include "Gra1/oknogra1.h"
+#include "Gra2/oknogra2.h"
 #include "ui_oknostartowe.h"
-#include "gra1mechaniki.h"
-#include "gra2mechaniki.h"
 #include "obslugawyjatkow.h"
 #include <QProcess>
 #include <QFile>
 #include <QMessageBox>
-#include <cstdlib>
 #include <QApplication>
 #include <qapplication.h>
 #include <QListWidget>
@@ -44,7 +41,7 @@ void OknoStartowe::on_firstGameButton_clicked()
     hide(); // Ukrywamy okno
 
     int rows = 5, cols = 6;
-    QVector<QVector<int>> tablica = Gra1Mechaniki::GenerujSymbole(rows, cols); // Generacja symboli
+    QVector<QVector<int>> tablica = OknoGra1::GenerujSymbole(rows, cols); // Generacja symboli
 
     OknoGra1 *gra = new OknoGra1(this, nullptr); // Tworzymy nowe okno gry
     gra->setAttribute(Qt::WA_DeleteOnClose); // Zapewniamy automatyczne usunięcie po zamknięciu
@@ -58,9 +55,9 @@ void OknoStartowe::on_secondGameButton_clicked()
     hide();
 
     int rows = 3, cols = 3;
-    QVector<QVector<int>> tablica = Gra2Mechaniki::GenerujSymbole(rows, cols);
+    QVector<QVector<int>> tablica = OknoGra1::GenerujSymbole(rows, cols);
 
-    OknoGra2 *gra = new OknoGra2(this, nullptr); // Tworzenia okna z grą
+    OknoGra1 *gra = new OknoGra2(this, nullptr); // Tworzenia okna z grą
     gra->setAttribute(Qt::WA_DeleteOnClose);
     gra->show();
     gra->UstawGrid(tablica, rows, cols);

@@ -3,7 +3,8 @@
 
 #include <QString>
 
-class Wygrane {
+class Wygrane
+{
 public:
     Wygrane();                              // konstruktor domyślny
     Wygrane(const QString &text);           // konstruktor z QString
@@ -17,7 +18,6 @@ public:
     QString toLower() const;
     void zapisz1(float kwota, const QString &symbol, int ilosc);
     void zapisz2(float kwota, const QString &symbol, int ilosc);
-
 
 private:
     QString data;

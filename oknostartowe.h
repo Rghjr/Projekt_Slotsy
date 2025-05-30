@@ -14,7 +14,6 @@ class OknoStartowe : public QMainWindow
 {
     Q_OBJECT
 
-
 public:
     float saldo = 100;
 
@@ -30,12 +29,7 @@ public:
     void WczytajDaneGra1();
     void WczytajDaneGra2();
 
-
-
-
 private slots:
-
-
     void on_exitButton_clicked();
 
     void on_secondGameButton_clicked();

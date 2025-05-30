@@ -45,28 +45,26 @@ OknoGra1::OknoGra1(OknoStartowe* startoweOkno, QWidget *parent)
     ui->KiwiEdit->setText("8");
     ui->BonusEdit->setText("4");
 
-    ui->liczbaSymboliLineEdit_Japko->setText("8");      // Tu ustawiłeś liczbę symboli dla jabłka
-    ui->liczbaSymboliLineEdit_Banan->setText("8");      // Liczba symboli dla banana
-    ui->liczbaSymboliLineEdit_Winogronko->setText("8"); // Liczba symboli dla winogronka
-    ui->liczbaSymboliLineEdit_Wisnia->setText("8");     // Liczba symboli dla wiśni
-    ui->liczbaSymboliLineEdit_Ananas->setText("8");     // Liczba symboli dla ananasa
-    ui->liczbaSymboliLineEdit_Kiwi->setText("8");       // Liczba symboli dla kiwi
-    ui->liczbaSymboliLineEdit_Bonus->setText("4");      // Liczba symboli dla bonusu
+    ui->liczbaSymboliLineEdit_Japko->setText("8");
+    ui->liczbaSymboliLineEdit_Banan->setText("8");
+    ui->liczbaSymboliLineEdit_Winogronko->setText("8");
+    ui->liczbaSymboliLineEdit_Wisnia->setText("8");
+    ui->liczbaSymboliLineEdit_Ananas->setText("8");
+    ui->liczbaSymboliLineEdit_Kiwi->setText("8");
+    ui->liczbaSymboliLineEdit_Bonus->setText("4");
 
-    // Ustawienie początkowych wartości wygranych (jeśli też chcesz je ustawić na etykietach)
-    ui->kwotaWygranejLineEdit_Japko->setText("0.75");   // Kwota wygranej dla jabłka
-    ui->kwotaWygranejLineEdit_Banan->setText("1.25");   // Kwota wygranej dla banana
-    ui->kwotaWygranejLineEdit_Winogronko->setText("2"); // Kwota wygranej dla winogronka
-    ui->kwotaWygranejLineEdit_Wisnia->setText("3");     // Kwota wygranej dla wiśni
-    ui->kwotaWygranejLineEdit_Ananas->setText("5");     // Kwota wygranej dla ananasa
-    ui->kwotaWygranejLineEdit_Kiwi->setText("8");       // Kwota wygranej dla kiwi
+    ui->kwotaWygranejLineEdit_Japko->setText("0.75");
+    ui->kwotaWygranejLineEdit_Banan->setText("1.25");
+    ui->kwotaWygranejLineEdit_Winogronko->setText("2");
+    ui->kwotaWygranejLineEdit_Wisnia->setText("3");
+    ui->kwotaWygranejLineEdit_Ananas->setText("5");
+    ui->kwotaWygranejLineEdit_Kiwi->setText("8");
 
     ui->liczbaFreeSpinowLineEdit->setText("10");
     ui->liczbaDodatkowychSpinowLineEdit->setText("1");
 
     // Ładowanie prawdopodobieństw z pliku (już z początkowymi wartościami)
-
-    if(WczytanieZPliku())
+    if(OknoGra1::WczytanieZPliku())
     {
         ui->JapkoEdit->setText(QString::number(p_japko));
         ui->BananEdit->setText(QString::number(p_banan));
@@ -98,7 +96,7 @@ OknoGra1::OknoGra1(OknoStartowe* startoweOkno, QWidget *parent)
         ui->liczbaDodatkowychSpinowLineEdit->setText(QString::number(l_dodatkowychFreeSpinow));
     }
 
-    WczytajPrawdopodobienstwa();
+    OknoGra1::WczytajPrawdopodobienstwa();
 }
 
 OknoGra1::~OknoGra1()
@@ -106,7 +104,7 @@ OknoGra1::~OknoGra1()
     delete ui;
 }
 
-void OknoGra1::UstawGrid(QVector<QVector<int>> tablica, int rows, int cols)
+void OknoGra1::UstawGrid(const QVector<QVector<int>> &tablica, int rows, int cols)
 {
     QStringList owoce = {"🍎", "🍌", "🍇", "🍒", "🍍", "🥝", "🎁"};
 
@@ -132,6 +130,17 @@ void OknoGra1::UstawGrid(QVector<QVector<int>> tablica, int rows, int cols)
             gridLabels[i][j] = label;
         }
     }
+}
+
+QVector<QVector<int>> OknoGra1::GenerujSymbole(int rows, int cols)
+{
+    QVector<QVector<int>> tablica(rows, QVector<int>(cols)); // Tworzymy dwuwymiarowy wektor o wymiarach rows na cols
+
+    for (int i = 0; i < rows; ++i) // Wypełniamy każdy element losową wartością od 0 do 6 (indeksy symboli)
+        for (int j = 0; j < cols; ++j)
+            tablica[i][j] = rand() % 7;
+
+    return tablica;
 }
 
 int OknoGra1::PrzypiszOwocek()
@@ -352,7 +361,8 @@ void OknoGra1::Bonus()
 void OknoGra1::LosujOdNowa()
 {
     try{
-    if (saldo < stawka) {
+    if (saldo < stawka)
+    {
         QMessageBox::warning(this, "Bieda", "Za małe saldo aby spinować");
         ui->maszyna->setEnabled(false);
         return;
@@ -399,7 +409,8 @@ void OknoGra1::LosujOdNowa()
 
     if (bonus==false) SprawdzWygrana();
     ui->SPINPRZYCISK->setEnabled(true);
-    } catch (std::exception& ZlyInput)
+    }
+    catch (std::exception& ZlyInput) //łapany wyjątek z WczytajPrawdopodobienstwo
     {
     QMessageBox::warning(this, "Błąd wejścia", ZlyInput.what());
     ui->SPINPRZYCISK->setEnabled(true);
@@ -563,7 +574,8 @@ void OknoGra1::on_returnButton_select()
     } else {
         qWarning() << "oknoStartowe is nullptr!";
     }
-    } catch (std::exception& ZlyInput)
+    }
+    catch (std::exception& ZlyInput)
     {
         QMessageBox::warning(this, "Błąd wejścia", ZlyInput.what());
         return;

@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>721</width>
-    <height>589</height>
+    <height>594</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Gra1</string>
   </property>
   <property name="SizePolicy" stdset="0">
    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
