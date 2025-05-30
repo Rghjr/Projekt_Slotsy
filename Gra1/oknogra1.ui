@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OknoGra1</class>
+ <widget class="QMainWindow" name="OknoGra1">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>721</width>
+    <height>594</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Gra1</string>
+  </property>
+  <property name="SizePolicy" stdset="0">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="SizePolicy" stdset="0">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0" rowspan="4" colspan="3">
+     <layout class="QGridLayout" name="maszyna"/>
+    </item>
+    <item row="11" column="0">
+     <widget class="QLabel" name="liczbaFreeSpinow">
+      <property name="text">
+       <string>FreeSpiny: </string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3" rowspan="2" colspan="2">
+     <widget class="QWidget" name="widget" native="true">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="3">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Mnożnik</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="JapkoEdit"/>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="ObrazekKiwi">
+         <property name="text">
+          <string>🥝</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="ObrazekBanan">
+         <property name="text">
+          <string>🍌</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="3">
+        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Wisnia"/>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Szanse</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="WisniaEdit"/>
+       </item>
+       <item row="8" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Bonus"/>
+       </item>
+       <item row="4" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Wisnia"/>
+       </item>
+       <item row="5" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Ananas"/>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLineEdit" name="BonusEdit"/>
+       </item>
+       <item row="3" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Winogronko"/>
+       </item>
+       <item row="6" column="3">
+        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Kiwi"/>
+       </item>
+       <item row="8" column="3">
+        <widget class="QLineEdit" name="liczbaFreeSpinowLineEdit"/>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="AnanasEdit"/>
+       </item>
+       <item row="1" column="3">
+        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Japko"/>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="ObrazekBonus">
+         <property name="text">
+          <string>🎁</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Banan"/>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Japko"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="ObrazekWinogrono">
+         <property name="text">
+          <string>🍇</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="ObrazekAnanas">
+         <property name="text">
+          <string>🍍</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Winogronko"/>
+       </item>
+       <item row="9" column="3">
+        <widget class="QLineEdit" name="liczbaDodatkowychSpinowLineEdit"/>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="WinogronkoEdit"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="ObrazekJapko">
+         <property name="text">
+          <string>🍎</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QLineEdit" name="KiwiEdit"/>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="BananEdit"/>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Banan"/>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Ilość</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="2">
+        <widget class="QLineEdit" name="liczbaSymboliLineEdit_Kiwi"/>
+       </item>
+       <item row="5" column="3">
+        <widget class="QLineEdit" name="kwotaWygranejLineEdit_Ananas"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="ObrazekWisnia">
+         <property name="text">
+          <string>🍒</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="3">
+        <widget class="QLabel" name="LiczbaFreeSpinowTekst">
+         <property name="text">
+          <string>Liczba FreeSpinów</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="2">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Liczba dodatkowych
+ FreeSpinów</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="11" column="3" rowspan="4" colspan="2">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="2" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="minusButton">
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="plusButton">
+            <property name="text">
+             <string>+</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="SPINPRZYCISK">
+            <property name="text">
+             <string>SPINEK</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="AUTOSPINPRZYCISK">
+            <property name="text">
+             <string>AUTOSPIN</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="11" column="1" rowspan="2">
+     <widget class="QLabel" name="infoLabel">
+      <property name="font">
+       <font>
+        <pointsize>18</pointsize>
+       </font>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LayoutDirection::LeftToRight</enum>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Shape::NoFrame</enum>
+      </property>
+      <property name="lineWidth">
+       <number>1</number>
+      </property>
+      <property name="text">
+       <string>Wygrane</string>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="3" rowspan="2" colspan="2">
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="2" column="0">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="1">
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="saldoLabel">
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+         </font>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Shape::NoFrame</enum>
+        </property>
+        <property name="text">
+         <string>Kasa</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="1">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="StawkaLabel">
+        <property name="font">
+         <font>
+          <pointsize>16</pointsize>
+         </font>
+        </property>
+        <property name="acceptDrops">
+         <bool>false</bool>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LayoutDirection::LeftToRight</enum>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Shape::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Shadow::Plain</enum>
+        </property>
+        <property name="text">
+         <string>SpinPrice</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="0">
+     <widget class="QPushButton" name="powrotButton">
+      <property name="text">
+       <string>Powrót</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>721</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

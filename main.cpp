@@ -1,7 +1,6 @@
 #include <QApplication>
 #include <cstdlib>
 #include <ctime>
-#include "UI/oknostartowe.h"
 #include "oknostartowe.h"
 
 
