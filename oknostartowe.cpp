@@ -11,6 +11,7 @@
 #include <QListWidget>
 
 
+
 OknoStartowe::OknoStartowe(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::OknoStartowe)

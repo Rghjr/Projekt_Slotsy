@@ -140,119 +140,119 @@
       <item row="15" column="0">
        <widget class="QCheckBox" name="l_16_check">
         <property name="text">
-         <string>Linia 16</string>
+         <string>linia 16  ‾––</string>
         </property>
        </widget>
       </item>
       <item row="5" column="0">
        <widget class="QCheckBox" name="l_6_check">
         <property name="text">
-         <string>Linia 6</string>
+         <string>linia 6   _–_</string>
         </property>
        </widget>
       </item>
       <item row="11" column="0">
        <widget class="QCheckBox" name="l_12_check">
         <property name="text">
-         <string>Linia 12</string>
+         <string>linia 12  ‾‾–</string>
         </property>
        </widget>
       </item>
       <item row="16" column="0">
        <widget class="QCheckBox" name="l_17_check">
         <property name="text">
-         <string>Linia 17</string>
+         <string>linia 17  ––‾</string>
         </property>
        </widget>
       </item>
       <item row="10" column="0">
        <widget class="QCheckBox" name="l_11_check">
         <property name="text">
-         <string>Linia 11</string>
+         <string>linia 11  ––‾</string>
         </property>
        </widget>
       </item>
       <item row="4" column="0">
        <widget class="QCheckBox" name="l_5_check">
         <property name="text">
-         <string>Linia 5</string>
+         <string>linia 5   _–‾</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
        <widget class="QCheckBox" name="l_2_check">
         <property name="text">
-         <string>Linia 2</string>
+         <string>linia 2   –––</string>
         </property>
        </widget>
       </item>
       <item row="6" column="0">
        <widget class="QCheckBox" name="l_7_check">
         <property name="text">
-         <string>Linia 7</string>
+         <string>linia 7   –‾–</string>
         </property>
        </widget>
       </item>
       <item row="7" column="0">
        <widget class="QCheckBox" name="l_8_check">
         <property name="text">
-         <string>Linia 8</string>
+         <string>linia 8   ‾–‾</string>
         </property>
        </widget>
       </item>
       <item row="9" column="0">
        <widget class="QCheckBox" name="l_10_check">
         <property name="text">
-         <string>Linia 10</string>
+         <string>linia 10  __–</string>
         </property>
        </widget>
       </item>
       <item row="14" column="0">
        <widget class="QCheckBox" name="l_15_check">
         <property name="text">
-         <string>Linia 15</string>
+         <string>linia 15  _––</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
        <widget class="QCheckBox" name="l_1_check">
         <property name="text">
-         <string>Linia 1</string>
+         <string>linia 1   ‾‾‾</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
        <widget class="QCheckBox" name="l_3_check">
         <property name="text">
-         <string>Linia 3</string>
+         <string>linia 3   ___</string>
         </property>
        </widget>
       </item>
       <item row="8" column="0">
        <widget class="QCheckBox" name="l_9_check">
         <property name="text">
-         <string>Linia 9</string>
+         <string>linia 9   –_–</string>
         </property>
        </widget>
       </item>
       <item row="12" column="0">
        <widget class="QCheckBox" name="l_13_check">
         <property name="text">
-         <string>Linia 13</string>
+         <string>linia 13  ––_</string>
         </property>
        </widget>
       </item>
       <item row="13" column="0">
        <widget class="QCheckBox" name="l_14_check">
         <property name="text">
-         <string>Linia 14</string>
+         <string>linia 14  –‾‾</string>
         </property>
        </widget>
       </item>
       <item row="3" column="0">
        <widget class="QCheckBox" name="l_4_check">
         <property name="text">
-         <string>Linia 4</string>
+         <string>linia 4   ‾–_</string>
         </property>
        </widget>
       </item>
@@ -498,7 +498,7 @@
      <x>0</x>
      <y>0</y>
      <width>894</width>
-     <height>21</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>
